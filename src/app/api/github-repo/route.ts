@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { currentUser } from "@clerk/nextjs/server";
-import arcjet, { shield, fixedWindow, detectBot } from "@arcjet/next";
 import { NextResponse } from "next/server";
+import { createArcjet, enforceArcjet } from "@/lib/arcjetHelpers";
 import { parseGithubRepoRef } from "@/lib/parseGithubUrl";
 import type { GithubRepoMeta } from "@/lib/cursorIntegrationBundle";
 
@@ -9,22 +9,7 @@ dotenv.config({ path: `.env.local` });
 
 export const runtime = "nodejs";
 
-const aj = arcjet({
-  key: process.env.ARCJET_KEY!,
-  rules: [
-    shield({ mode: "LIVE" }),
-    fixedWindow({
-      mode: "LIVE",
-      characteristics: ["userId"],
-      window: "60s",
-      max: 30,
-    }),
-    detectBot({
-      mode: "LIVE",
-      block: ["AUTOMATED"],
-    }),
-  ],
-});
+const aj = createArcjet(30);
 
 async function ghFetch(path: string) {
   const headers: Record<string, string> = {
@@ -43,16 +28,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const decision = await aj.protect(request, { userId: user.id });
-  if (decision.isDenied()) {
-    if (decision.reason.isRateLimit()) {
-      return NextResponse.json({ error: "Too Many Requests" }, { status: 429 });
-    }
-    if (decision.reason.isBot()) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const blocked = await enforceArcjet(aj, request, user.id);
+  if (blocked) return blocked;
 
   const { searchParams } = new URL(request.url);
   const urlParam = searchParams.get("url") ?? "";

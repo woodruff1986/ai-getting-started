@@ -43,12 +43,15 @@ export function useDeskApiKeys() {
   );
 
   const save = useCallback(() => {
-    try {
-      localStorage.setItem(DESK_API_KEYS_STORAGE_KEY, JSON.stringify(keys));
-    } catch {
-      /* ignore */
-    }
-  }, [keys]);
+    setKeys((k) => {
+      try {
+        localStorage.setItem(DESK_API_KEYS_STORAGE_KEY, JSON.stringify(k));
+      } catch {
+        /* ignore */
+      }
+      return k;
+    });
+  }, []);
 
   const clearAll = useCallback(() => {
     const empty = { ...EMPTY_DESK_API_KEYS };
