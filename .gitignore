@@ -36,3 +36,7 @@ next-env.d.ts
 
 /.env.prod
 /fly.toml
+
+# Electron / installeur Windows
+/release/
+/electron-bundled/
