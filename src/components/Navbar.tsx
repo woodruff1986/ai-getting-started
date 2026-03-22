@@ -4,6 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 const navigation = [
   {
+    name: "Desk",
+    href: "/skale",
+    internal: true,
+    current: false,
+  },
+  {
     name: "Agent",
     href: "/agent",
     internal: true,

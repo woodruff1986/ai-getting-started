@@ -8,6 +8,7 @@ import {
   type DragEvent,
   type KeyboardEvent,
 } from "react";
+import clsx from "clsx";
 
 type AttachedFile = {
   id: string;
@@ -46,7 +47,7 @@ function downloadText(content: string, filename: string) {
   );
 }
 
-export default function AgentChat() {
+export default function AgentChat({ embedded = false }: { embedded?: boolean }) {
   const inputId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -173,18 +174,41 @@ export default function AgentChat() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] flex-col bg-slate-950 text-slate-100">
-      <div className="border-b border-white/10 bg-slate-900/80 px-4 py-4 backdrop-blur sm:px-8">
+    <div
+      className={clsx(
+        "flex flex-col",
+        embedded
+          ? "min-h-0 flex-1 bg-[var(--background)] text-[color:var(--text-primary)]"
+          : "min-h-[calc(100vh-4rem)] bg-slate-950 text-slate-100",
+      )}
+    >
+      <div
+        className={clsx(
+          "border-b px-4 py-4 sm:px-8",
+          embedded
+            ? "border-[var(--border)] bg-[var(--surface)]"
+            : "border-white/10 bg-slate-900/80 backdrop-blur",
+        )}
+      >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h1 className="text-xl font-semibold text-white">Chat agent</h1>
-            <p className="mt-1 max-w-3xl text-sm text-slate-400">
-              Ajoute n’importe quel type de fichier (glisser-déposer ou bouton).
-              Les images et le texte sont analysés ; les PDF sont lus quand c’est
-              possible ; les binaires sont signalés sans contenu brut. Télécharge
-              tes pièces jointes ou la réponse depuis les boutons sous chaque
-              bloc.
-            </p>
+            {!embedded && (
+              <h1 className="text-xl font-semibold text-white">Chat agent</h1>
+            )}
+            {embedded ? (
+              <p className="max-w-3xl text-xs text-[color:var(--text-secondary)]">
+                Fichiers illimités en type · 25 max · 20 Mo chacun · télécharge
+                pièces et réponses ci-dessous.
+              </p>
+            ) : (
+              <p className="mt-1 max-w-3xl text-sm text-slate-400">
+                Ajoute n’importe quel type de fichier (glisser-déposer ou bouton).
+                Les images et le texte sont analysés ; les PDF sont lus quand c’est
+                possible ; les binaires sont signalés sans contenu brut. Télécharge
+                tes pièces jointes ou la réponse depuis les boutons sous chaque
+                bloc.
+              </p>
+            )}
           </div>
           {messages.length > 0 && (
             <button
@@ -203,7 +227,12 @@ export default function AgentChat() {
                 }
                 downloadText(`conversation-${Date.now()}.md`, md);
               }}
-              className="shrink-0 rounded-xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 hover:bg-white/10"
+              className={clsx(
+                "shrink-0 rounded-xl border px-4 py-2 text-sm font-medium",
+                embedded
+                  ? "border-[var(--border)] bg-[var(--surface-light)] text-[color:var(--text-primary)] hover:bg-[var(--surface-hover)]"
+                  : "border-white/15 bg-white/5 text-slate-200 hover:bg-white/10",
+              )}
             >
               Exporter la discussion (.md)
             </button>
@@ -214,19 +243,53 @@ export default function AgentChat() {
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-8">
           {messages.length === 0 && !assistantDraft && (
-            <div className="mx-auto max-w-3xl rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-8 text-center text-slate-500">
-              <p className="text-slate-400">
+            <div
+              className={clsx(
+                "mx-auto max-w-3xl rounded-2xl border border-dashed p-8 text-center",
+                embedded
+                  ? "border-[var(--border)] bg-[var(--surface)] text-[color:var(--text-muted)]"
+                  : "border-white/15 bg-white/[0.02] text-slate-500",
+              )}
+            >
+              <p
+                className={
+                  embedded
+                    ? "text-[color:var(--text-secondary)]"
+                    : "text-slate-400"
+                }
+              >
                 Écris un message et joins des fichiers si tu veux. Raccourci
                 envoi :{" "}
-                <kbd className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 font-mono text-xs text-slate-300">
+                <kbd
+                  className={clsx(
+                    "rounded border px-1.5 py-0.5 font-mono text-xs",
+                    embedded
+                      ? "border-[var(--border)] bg-[var(--surface-light)] text-[color:var(--text-secondary)]"
+                      : "border-white/20 bg-white/5 text-slate-300",
+                  )}
+                >
                   Ctrl
                 </kbd>{" "}
                 +{" "}
-                <kbd className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 font-mono text-xs text-slate-300">
+                <kbd
+                  className={clsx(
+                    "rounded border px-1.5 py-0.5 font-mono text-xs",
+                    embedded
+                      ? "border-[var(--border)] bg-[var(--surface-light)] text-[color:var(--text-secondary)]"
+                      : "border-white/20 bg-white/5 text-slate-300",
+                  )}
+                >
                   Entrée
                 </kbd>{" "}
                 ({" "}
-                <kbd className="rounded border border-white/20 bg-white/5 px-1.5 py-0.5 font-mono text-xs text-slate-300">
+                <kbd
+                  className={clsx(
+                    "rounded border px-1.5 py-0.5 font-mono text-xs",
+                    embedded
+                      ? "border-[var(--border)] bg-[var(--surface-light)] text-[color:var(--text-secondary)]"
+                      : "border-white/20 bg-white/5 text-slate-300",
+                  )}
+                >
                   ⌘
                 </kbd>{" "}
                 + Entrée sur Mac).
@@ -238,14 +301,26 @@ export default function AgentChat() {
             {messages.map((msg) => (
               <article
                 key={msg.id}
-                className={`rounded-2xl border px-4 py-4 sm:px-5 sm:py-5 ${
-                  msg.role === "user"
-                    ? "border-sky-500/25 bg-sky-500/5"
-                    : "border-violet-500/25 bg-violet-500/5"
-                }`}
+                className={clsx(
+                  "rounded-2xl border px-4 py-4 sm:px-5 sm:py-5",
+                  embedded
+                    ? msg.role === "user"
+                      ? "border-[var(--accent)]/30 bg-[var(--accent-muted)]"
+                      : "border-[var(--border)] bg-[var(--surface)]"
+                    : msg.role === "user"
+                      ? "border-sky-500/25 bg-sky-500/5"
+                      : "border-violet-500/25 bg-violet-500/5",
+                )}
               >
                 <header className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <span
+                    className={clsx(
+                      "text-xs font-semibold uppercase tracking-wide",
+                      embedded
+                        ? "text-[color:var(--text-muted)]"
+                        : "text-slate-400",
+                    )}
+                  >
                     {msg.role === "user" ? "Toi" : "Agent"}
                   </span>
                   {msg.role === "assistant" && msg.content && (
@@ -257,7 +332,12 @@ export default function AgentChat() {
                           msg.content,
                         )
                       }
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 hover:bg-white/10"
+                      className={clsx(
+                        "rounded-lg border px-3 py-1 text-xs font-medium",
+                        embedded
+                          ? "border-[var(--border)] bg-[var(--surface-light)] text-[color:var(--text-primary)] hover:bg-[var(--surface-hover)]"
+                          : "border-white/15 bg-white/5 text-slate-200 hover:bg-white/10",
+                      )}
                     >
                       Télécharger la réponse (.txt)
                     </button>
@@ -269,12 +349,30 @@ export default function AgentChat() {
                     {msg.files.map((a) => (
                       <li
                         key={a.id}
-                        className="flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-xs"
+                        className={clsx(
+                          "flex items-center gap-2 rounded-lg border px-3 py-2 text-xs",
+                          embedded
+                            ? "border-[var(--border)] bg-[var(--surface-light)]"
+                            : "border-white/10 bg-black/30",
+                        )}
                       >
-                        <span className="max-w-[200px] truncate font-medium text-slate-200">
+                        <span
+                          className={clsx(
+                            "max-w-[200px] truncate font-medium",
+                            embedded
+                              ? "text-[color:var(--text-primary)]"
+                              : "text-slate-200",
+                          )}
+                        >
                           {a.file.name}
                         </span>
-                        <span className="text-slate-500">
+                        <span
+                          className={
+                            embedded
+                              ? "text-[color:var(--text-muted)]"
+                              : "text-slate-500"
+                          }
+                        >
                           {a.file.type || "type inconnu"} ·{" "}
                           {formatBytes(a.file.size)}
                         </span>
@@ -283,7 +381,11 @@ export default function AgentChat() {
                           onClick={() =>
                             downloadBlob(a.file, a.file.name || "fichier")
                           }
-                          className="ml-1 text-sky-400 hover:text-sky-300"
+                          className={
+                            embedded
+                              ? "ml-1 text-[var(--accent)] hover:text-[var(--accent-hover)]"
+                              : "ml-1 text-sky-400 hover:text-sky-300"
+                          }
                         >
                           Télécharger
                         </button>
@@ -292,16 +394,37 @@ export default function AgentChat() {
                   </ul>
                 )}
 
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">
+                <p
+                  className={clsx(
+                    "whitespace-pre-wrap text-sm leading-relaxed",
+                    embedded
+                      ? "text-[color:var(--text-primary)]"
+                      : "text-slate-200",
+                  )}
+                >
                   {msg.content}
                 </p>
               </article>
             ))}
 
             {assistantDraft !== null && (
-              <article className="rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-4 sm:px-5 sm:py-5">
+              <article
+                className={clsx(
+                  "rounded-2xl border px-4 py-4 sm:px-5 sm:py-5",
+                  embedded
+                    ? "border-[var(--accent)]/35 bg-[var(--accent-muted)]"
+                    : "border-violet-500/30 bg-violet-500/10",
+                )}
+              >
                 <header className="mb-2 flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  <span
+                    className={clsx(
+                      "text-xs font-semibold uppercase tracking-wide",
+                      embedded
+                        ? "text-[color:var(--text-muted)]"
+                        : "text-slate-400",
+                    )}
+                  >
                     Agent
                   </span>
                   {assistantDraft && (
@@ -313,16 +436,40 @@ export default function AgentChat() {
                           assistantDraft,
                         )
                       }
-                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-1 text-xs font-medium text-slate-200 hover:bg-white/10"
+                      className={clsx(
+                        "rounded-lg border px-3 py-1 text-xs font-medium",
+                        embedded
+                          ? "border-[var(--border)] bg-[var(--surface-light)] text-[color:var(--text-primary)] hover:bg-[var(--surface-hover)]"
+                          : "border-white/15 bg-white/5 text-slate-200 hover:bg-white/10",
+                      )}
                     >
                       Télécharger le brouillon
                     </button>
                   )}
                 </header>
-                <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-200">
+                <p
+                  className={clsx(
+                    "whitespace-pre-wrap text-sm leading-relaxed",
+                    embedded
+                      ? "text-[color:var(--text-primary)]"
+                      : "text-slate-200",
+                  )}
+                >
                   {assistantDraft || (
-                    <span className="inline-flex items-center gap-2 text-slate-500">
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-violet-400" />
+                    <span
+                      className={clsx(
+                        "inline-flex items-center gap-2",
+                        embedded
+                          ? "text-[color:var(--text-muted)]"
+                          : "text-slate-500",
+                      )}
+                    >
+                      <span
+                        className={clsx(
+                          "h-2 w-2 animate-pulse rounded-full",
+                          embedded ? "bg-[var(--accent)]" : "bg-violet-400",
+                        )}
+                      />
                       Réflexion…
                     </span>
                   )}
@@ -333,7 +480,14 @@ export default function AgentChat() {
           </div>
         </div>
 
-        <div className="border-t border-white/10 bg-slate-900/90 px-4 py-4 backdrop-blur sm:px-8">
+        <div
+          className={clsx(
+            "border-t px-4 py-4 sm:px-8",
+            embedded
+              ? "border-[var(--border)] bg-[var(--surface)]"
+              : "border-white/10 bg-slate-900/90 backdrop-blur",
+          )}
+        >
           <div className="mx-auto max-w-3xl">
             <div
               onDragEnter={(e) => {
@@ -346,23 +500,52 @@ export default function AgentChat() {
               }}
               onDragOver={(e) => e.preventDefault()}
               onDrop={onDrop}
-              className={`rounded-2xl border-2 border-dashed transition ${
+              className={clsx(
+                "rounded-2xl border-2 border-dashed transition",
                 dragActive
-                  ? "border-sky-400 bg-sky-500/10"
-                  : "border-white/10 bg-white/[0.03]"
-              }`}
+                  ? embedded
+                    ? "border-[var(--accent)] bg-[var(--accent-muted)]"
+                    : "border-sky-400 bg-sky-500/10"
+                  : embedded
+                    ? "border-[var(--border)] bg-[var(--surface-light)]"
+                    : "border-white/10 bg-white/[0.03]",
+              )}
             >
               {attachments.length > 0 && (
-                <ul className="flex flex-wrap gap-2 border-b border-white/10 p-3">
+                <ul
+                  className={clsx(
+                    "flex flex-wrap gap-2 border-b p-3",
+                    embedded
+                      ? "border-[var(--border)]"
+                      : "border-white/10",
+                  )}
+                >
                   {attachments.map((a) => (
                     <li
                       key={a.id}
-                      className="flex items-center gap-2 rounded-lg bg-black/40 px-3 py-2 text-xs"
+                      className={clsx(
+                        "flex items-center gap-2 rounded-lg px-3 py-2 text-xs",
+                        embedded
+                          ? "bg-[var(--background)]"
+                          : "bg-black/40",
+                      )}
                     >
-                      <span className="max-w-[180px] truncate text-slate-200">
+                      <span
+                        className={
+                          embedded
+                            ? "max-w-[180px] truncate text-[color:var(--text-primary)]"
+                            : "max-w-[180px] truncate text-slate-200"
+                        }
+                      >
                         {a.file.name}
                       </span>
-                      <span className="text-slate-500">
+                      <span
+                        className={
+                          embedded
+                            ? "text-[color:var(--text-muted)]"
+                            : "text-slate-500"
+                        }
+                      >
                         {formatBytes(a.file.size)}
                       </span>
                       <button
@@ -370,14 +553,22 @@ export default function AgentChat() {
                         onClick={() =>
                           downloadBlob(a.file, a.file.name || "fichier")
                         }
-                        className="text-sky-400 hover:text-sky-300"
+                        className={
+                          embedded
+                            ? "text-[var(--accent)] hover:text-[var(--accent-hover)]"
+                            : "text-sky-400 hover:text-sky-300"
+                        }
                       >
                         Télécharger
                       </button>
                       <button
                         type="button"
                         onClick={() => removeAttachment(a.id)}
-                        className="text-slate-500 hover:text-rose-400"
+                        className={
+                          embedded
+                            ? "text-[color:var(--text-muted)] hover:text-rose-500"
+                            : "text-slate-500 hover:text-rose-400"
+                        }
                         aria-label={`Retirer ${a.file.name}`}
                       >
                         ×
@@ -398,7 +589,12 @@ export default function AgentChat() {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={onKeyDown}
                   placeholder="Pose ta question ou décris ce que tu veux faire avec les fichiers…"
-                  className="w-full resize-none rounded-xl border-0 bg-black/30 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:ring-2 focus:ring-sky-500"
+                  className={clsx(
+                    "w-full resize-none rounded-xl border-0 px-4 py-3 text-sm focus:ring-2",
+                    embedded
+                      ? "bg-[var(--background)] text-[color:var(--text-primary)] placeholder:text-[color:var(--text-muted)] focus:ring-[var(--ring)]"
+                      : "bg-black/30 text-white placeholder:text-slate-500 focus:ring-sky-500",
+                  )}
                   disabled={isSending}
                 />
 
@@ -418,7 +614,12 @@ export default function AgentChat() {
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isSending}
-                    className="rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-sm font-medium text-slate-200 hover:bg-white/10 disabled:opacity-50"
+                    className={clsx(
+                      "rounded-xl border px-4 py-2.5 text-sm font-medium disabled:opacity-50",
+                      embedded
+                        ? "border-[var(--border)] bg-[var(--surface-light)] text-[color:var(--text-primary)] hover:bg-[var(--surface-hover)]"
+                        : "border-white/15 bg-white/5 text-slate-200 hover:bg-white/10",
+                    )}
                   >
                     Joindre des fichiers
                   </button>
@@ -428,11 +629,22 @@ export default function AgentChat() {
                     disabled={
                       isSending || (!input.trim() && attachments.length === 0)
                     }
-                    className="rounded-xl bg-gradient-to-r from-sky-500 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-sky-900/30 hover:from-sky-400 hover:to-violet-500 disabled:opacity-40"
+                    className={clsx(
+                      "rounded-xl px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-40",
+                      embedded
+                        ? "bg-[var(--accent)] shadow-md hover:bg-[var(--accent-hover)]"
+                        : "bg-gradient-to-r from-sky-500 to-violet-600 shadow-lg shadow-sky-900/30 hover:from-sky-400 hover:to-violet-500",
+                    )}
                   >
                     {isSending ? "Envoi…" : "Envoyer"}
                   </button>
-                  <span className="text-xs text-slate-500">
+                  <span
+                    className={
+                      embedded
+                        ? "text-xs text-[color:var(--text-muted)]"
+                        : "text-xs text-slate-500"
+                    }
+                  >
                     Jusqu’à 25 fichiers, 20 Mo chacun · tous types acceptés
                   </span>
                 </div>

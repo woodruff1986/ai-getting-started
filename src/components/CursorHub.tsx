@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState, type ReactNode } from "react";
+import clsx from "clsx";
 
 type PromptTemplate = {
   id: string;
@@ -116,19 +117,38 @@ function CopyPromptButton({ text }: { text: string }) {
   );
 }
 
-export default function CursorHub() {
+export default function CursorHub({ embedded = false }: { embedded?: boolean }) {
   const [platform, setPlatform] = useState<"mac" | "win">("mac");
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-slate-950 pb-24 pt-24 text-slate-100">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-40"
-        aria-hidden
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 50% at 50% -20%, rgb(56 189 248 / 0.25), transparent), radial-gradient(ellipse 60% 40% at 100% 50%, rgb(167 139 250 / 0.15), transparent)",
-        }}
-      />
+    <div
+      className={clsx(
+        "relative overflow-hidden pb-24 text-slate-100",
+        embedded
+          ? "skale-guide-embed min-h-0 flex-1 bg-transparent pt-6"
+          : "min-h-screen bg-slate-950 pt-24",
+      )}
+    >
+      {!embedded && (
+        <div
+          className="pointer-events-none absolute inset-0 opacity-40"
+          aria-hidden
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 50% at 50% -20%, rgb(56 189 248 / 0.25), transparent), radial-gradient(ellipse 60% 40% at 100% 50%, rgb(167 139 250 / 0.15), transparent)",
+          }}
+        />
+      )}
+      {embedded && (
+        <div
+          className="pointer-events-none absolute inset-0 opacity-50"
+          aria-hidden
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 50% at 50% -20%, var(--accent-muted), transparent 70%)",
+          }}
+        />
+      )}
 
       <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <header className="text-center">
