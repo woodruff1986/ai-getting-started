@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Examples from "@/components/Examples";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -13,6 +14,23 @@ export default function Home() {
         <p className="mx-auto mt-4 max-w-xl text-center text-xl leading-8 text-slate-400">
           Help you set up an AI project with ease. Here are two example use cases:
         </p>
+
+        <div className="mx-auto mt-10 max-w-xl">
+          <Link
+            href="/cursor"
+            className="group flex flex-col gap-2 rounded-2xl border border-sky-400/30 bg-gradient-to-br from-sky-500/10 to-violet-500/10 px-6 py-5 text-left shadow-lg ring-1 ring-white/10 transition hover:border-sky-400/50 hover:from-sky-500/15 hover:to-violet-500/15 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-gray-900"
+          >
+            <span className="text-sm font-semibold uppercase tracking-wide text-sky-300">
+              Nouveau · Guide Cursor
+            </span>
+            <span className="text-lg font-semibold text-white">
+              Interface conviviale : raccourcis, modes et prompts à copier
+            </span>
+            <span className="text-sm text-slate-400 group-hover:text-slate-300">
+              Ouvre le hub à côté de l’éditeur →
+            </span>
+          </Link>
+        </div>
 
         <Examples />
 
