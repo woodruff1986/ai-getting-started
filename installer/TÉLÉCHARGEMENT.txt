@@ -1,0 +1,25 @@
+Installateur Windows (.exe) — Desk Cursor
+=========================================
+
+Le fichier .exe n’est pas versionné dans Git (fichier trop volumineux pour l’historique).
+
+Où le récupérer
+---------------
+
+1) GitHub Actions (à chaque fois que tu veux un build à jour)
+   - Ouvre le dépôt sur GitHub → onglet « Actions »
+   - Workflow : « Windows installer »
+   - Ouvre le dernier run réussi → section « Artifacts »
+   - Télécharge « Desk-Cursor-Setup-Windows » (archive zip contenant le .exe)
+
+2) GitHub Releases (lien stable après publication)
+   - Crée et pousse un tag de version, par exemple :
+       git tag v1.0.0
+       git push origin v1.0.0
+   - Le même workflow attache automatiquement le .exe à la Release créée pour ce tag.
+
+Build en local (Windows uniquement)
+------------------------------------
+   npm install
+   npm run dist:win
+   → fichier dans le dossier release/
