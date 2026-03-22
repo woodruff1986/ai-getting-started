@@ -4,8 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 const navigation = [
   {
+    name: "Cursor",
+    href: "/cursor",
+    internal: true,
+    current: false,
+  },
+  {
     name: "About",
     href: "https://github.com/a16z-infra/ai-getting-started",
+    internal: false,
     current: false,
   },
 ];
@@ -41,21 +48,37 @@ export default function Navbar() {
             </div>
             <div className="ml-6">
               <div className="flex space-x-2 sm:space-x-4">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className={classNames(
-                      item.current
-                        ? "bg-gray-900 text-white"
-                        : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                      "rounded-md px-3 py-2 text-sm font-medium",
-                    )}
-                    aria-current={item.current ? "page" : undefined}
-                  >
-                    {item.name}
-                  </a>
-                ))}
+                {navigation.map((item) =>
+                  item.internal ? (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className={classNames(
+                        item.current
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "rounded-md px-3 py-2 text-sm font-medium",
+                      )}
+                      aria-current={item.current ? "page" : undefined}
+                    >
+                      {item.name}
+                    </Link>
+                  ) : (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className={classNames(
+                        item.current
+                          ? "bg-gray-900 text-white"
+                          : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                        "rounded-md px-3 py-2 text-sm font-medium",
+                      )}
+                      aria-current={item.current ? "page" : undefined}
+                    >
+                      {item.name}
+                    </a>
+                  ),
+                )}
                 <div className="px-3 py-2 text-gray-300">
                   <iframe
                     src="https://ghbtns.com/github-btn.html?user=a16z-infra&repo=ai-getting-started&type=star&count=true"
