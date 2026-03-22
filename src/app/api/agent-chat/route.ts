@@ -8,6 +8,7 @@ import type { ChatCompletionContentPart } from "openai/resources/chat/completion
 import { fileToContentParts } from "@/lib/agentFiles";
 import { parseSkillsFormField } from "@/lib/agentChatSkills";
 import { getDeskAgentById } from "@/lib/deskAgents";
+import { resolveDeskChatModelForApi } from "@/lib/deskChatModels";
 
 dotenv.config({ path: `.env.local` });
 
@@ -80,6 +81,15 @@ export async function POST(request: Request) {
   const agent = getDeskAgentById(agentId);
   const skillsBlock = parseSkillsFormField(formData.get("skills"));
 
+  const modelIdRaw = formData.get("modelId");
+  const modelResolved = resolveDeskChatModelForApi(
+    typeof modelIdRaw === "string" ? modelIdRaw : null,
+  );
+  if (!modelResolved.ok) {
+    return NextResponse.json({ error: modelResolved.error }, { status: 400 });
+  }
+  const openaiModel = modelResolved.apiModel;
+
   const fileEntries = formData.getAll("files");
   const files: File[] = [];
   for (const entry of fileEntries) {
@@ -144,7 +154,7 @@ export async function POST(request: Request) {
   }
 
   const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: openaiModel,
     stream: true,
     max_tokens: 4096,
     messages: [

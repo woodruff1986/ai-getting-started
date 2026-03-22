@@ -11,9 +11,19 @@ import {
 } from "react";
 import clsx from "clsx";
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { useDeskSkills } from "@/hooks/useDeskSkills";
 import { DESK_AGENTS, DEFAULT_DESK_AGENT_ID } from "@/lib/deskAgents";
-import { DESK_AGENT_STORAGE_KEY } from "@/lib/deskSkillsTypes";
+import {
+  DEFAULT_DESK_CHAT_MODEL_ID,
+  getDeskChatModelLabel,
+  getEnabledDeskChatModels,
+} from "@/lib/deskChatModels";
+import {
+  DESK_AGENT_STORAGE_KEY,
+  DESK_CHAT_MODEL_STORAGE_KEY,
+} from "@/lib/deskSkillsTypes";
+import DeskModelPickerModal from "@/components/skale/DeskModelPickerModal";
 
 type AttachedFile = {
   id: string;
@@ -58,6 +68,8 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { skills, ready: skillsReady } = useDeskSkills();
   const [agentId, setAgentId] = useState(DEFAULT_DESK_AGENT_ID);
+  const [modelId, setModelId] = useState(DEFAULT_DESK_CHAT_MODEL_ID);
+  const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<AttachedFile[]>([]);
@@ -81,6 +93,28 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
       /* ignore */
     }
   }, [agentId]);
+
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem(DESK_CHAT_MODEL_STORAGE_KEY);
+      if (
+        s &&
+        getEnabledDeskChatModels().some((m) => m.id === s)
+      ) {
+        setModelId(s);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(DESK_CHAT_MODEL_STORAGE_KEY, modelId);
+    } catch {
+      /* ignore */
+    }
+  }, [modelId]);
 
   const addFiles = useCallback((list: FileList | File[]) => {
     const arr = Array.from(list);
@@ -130,6 +164,7 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
     const fd = new FormData();
     fd.append("prompt", userMsg.content);
     fd.append("agentId", agentId);
+    fd.append("modelId", modelId);
     fd.append(
       "skills",
       JSON.stringify(
@@ -201,7 +236,7 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
     } finally {
       setIsSending(false);
     }
-  }, [attachments, input, agentId, skills, skillsReady]);
+  }, [attachments, input, agentId, modelId, skills, skillsReady]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -311,6 +346,39 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
             </option>
           ))}
         </select>
+        <span
+          className={clsx(
+            "hidden h-4 w-px shrink-0 sm:block",
+            embedded ? "bg-[var(--border)]" : "bg-white/15",
+          )}
+          aria-hidden
+        />
+        <span
+          className={clsx(
+            "text-xs font-medium uppercase tracking-wide",
+            embedded ? "text-[color:var(--text-muted)]" : "text-slate-500",
+          )}
+        >
+          Modèle
+        </span>
+        <button
+          type="button"
+          onClick={() => setModelPickerOpen(true)}
+          className={clsx(
+            "inline-flex max-w-full items-center gap-1.5 rounded-lg border px-3 py-1.5 text-left text-sm font-medium transition",
+            embedded
+              ? "border-[var(--border)] bg-[var(--background)] text-[color:var(--text-primary)] hover:bg-[var(--surface-hover)]"
+              : "border-white/15 bg-black/30 text-white hover:bg-black/40",
+          )}
+        >
+          <Sparkles
+            className={clsx(
+              "h-3.5 w-3.5 shrink-0",
+              embedded ? "text-[var(--accent)]" : "text-sky-400",
+            )}
+          />
+          <span className="truncate">{getDeskChatModelLabel(modelId)}</span>
+        </button>
         <span
           className={clsx(
             "text-xs",
@@ -750,6 +818,14 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
           </div>
         </div>
       </div>
+
+      <DeskModelPickerModal
+        open={modelPickerOpen}
+        onClose={() => setModelPickerOpen(false)}
+        value={modelId}
+        onSelect={setModelId}
+        embedded={embedded}
+      />
     </div>
   );
 }
