@@ -10,7 +10,7 @@
     "build": "next build",
     "build:standalone": "cross-env ELECTRON_STANDALONE=1 next build && node scripts/prepare-standalone.mjs",
     "start": "next start",
-    "electron:dev": "cross-env ELECTRON_STANDALONE=1 npm run build:standalone && electron .",
+    "electron:dev": "npm run build:standalone && electron .",
     "dist:win": "npm run build:standalone && electron-builder --win --x64",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",

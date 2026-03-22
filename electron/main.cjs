@@ -18,7 +18,7 @@ function standaloneDir() {
 }
 
 function nodeCommand() {
-  if (process.platform === "win32") {
+  if (app.isPackaged && process.platform === "win32") {
     const bundled = path.join(process.resourcesPath, "node", "node.exe");
     if (fs.existsSync(bundled)) return bundled;
   }
@@ -83,17 +83,17 @@ function startNextServer() {
     app.quit();
   });
 
-  if (serverProcess.stderr && app.isPackaged) {
-    serverProcess.stderr.on("data", (d) => {
+  if (app.isPackaged && serverProcess) {
+    const logPath = path.join(app.getPath("userData"), "desk-server.log");
+    const append = (d) => {
       try {
-        fs.appendFileSync(
-          path.join(app.getPath("userData"), "desk-server.log"),
-          String(d),
-        );
+        fs.appendFileSync(logPath, String(d));
       } catch {
         /* ignore */
       }
-    });
+    };
+    if (serverProcess.stderr) serverProcess.stderr.on("data", append);
+    if (serverProcess.stdout) serverProcess.stdout.on("data", append);
   }
 }
 
