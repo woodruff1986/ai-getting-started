@@ -4,6 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 const navigation = [
   {
+    name: "Agent",
+    href: "/agent",
+    internal: true,
+    current: false,
+  },
+  {
     name: "Cursor",
     href: "/cursor",
     internal: true,
