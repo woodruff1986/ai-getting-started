@@ -23,3 +23,27 @@ Build en local (Windows uniquement)
    npm install
    npm run dist:win
    → fichier dans le dossier release/
+
+Script d’installation (télécharger puis double-cliquer)
+--------------------------------------------------------
+Place les fichiers suivants dans le **même dossier** (ex. Bureau ou C:\Desk) :
+
+  · Lancer-Installation.cmd
+  · Installer-Desk-Cursor.ps1
+
+Double-clique sur **Lancer-Installation.cmd** (ou exécute le .ps1 dans PowerShell).
+
+  · Mode par défaut **Release** : télécharge le dernier .exe GitHub Releases dans ce dossier
+    et lance l’installateur.
+  · Mode **Source** : clone le dépôt dans un sous-dossier et lance npm install.
+    Exemple :
+      powershell -ExecutionPolicy Bypass -File .\Installer-Desk-Cursor.ps1 -Mode Source
+
+Tu peux changer le dépôt ou la branche :
+  -Repo "mon-org/mon-repo" -Branch "ma-branche"
+
+Téléchargement direct (une fois le dépôt à jour sur GitHub, branche main) :
+  https://raw.githubusercontent.com/woodruff1986/ai-getting-started/main/installer/Lancer-Installation.cmd
+  https://raw.githubusercontent.com/woodruff1986/ai-getting-started/main/installer/Installer-Desk-Cursor.ps1
+
+(Remplace owner/repo/branche si ton fork est différent.)
