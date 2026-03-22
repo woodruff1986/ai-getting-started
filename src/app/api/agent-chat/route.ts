@@ -6,6 +6,8 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import type { ChatCompletionContentPart } from "openai/resources/chat/completions";
 import { fileToContentParts } from "@/lib/agentFiles";
+import { parseSkillsFormField } from "@/lib/agentChatSkills";
+import { getDeskAgentById } from "@/lib/deskAgents";
 
 dotenv.config({ path: `.env.local` });
 
@@ -72,6 +74,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Le message est vide." }, { status: 400 });
   }
 
+  const agentIdRaw = formData.get("agentId");
+  const agentId =
+    typeof agentIdRaw === "string" && agentIdRaw.trim() ? agentIdRaw.trim() : "dev";
+  const agent = getDeskAgentById(agentId);
+  const skillsBlock = parseSkillsFormField(formData.get("skills"));
+
   const fileEntries = formData.getAll("files");
   const files: File[] = [];
   for (const entry of fileEntries) {
@@ -121,6 +129,20 @@ export async function POST(request: Request) {
     userContent.push(...parts);
   }
 
+  const baseSystem =
+    "Tu es un assistant de développement. Tu réponds en français lorsque l'utilisateur écrit en français. " +
+    "Les utilisateurs peuvent joindre des fichiers (texte, code, images, PDF, binaires). " +
+    "Pour les binaires non décodés, indique qu'il faut une autre représentation si une analyse fine est nécessaire.";
+
+  let systemContent =
+    `${baseSystem}\n\n## Persona actif : ${agent.label}\n${agent.system}${skillsBlock}`;
+  const MAX_SYSTEM = 16_000;
+  if (systemContent.length > MAX_SYSTEM) {
+    systemContent =
+      systemContent.slice(0, MAX_SYSTEM) +
+      "\n\n[Instructions système tronquées — raccourcis les skills ou le persona.]";
+  }
+
   const completion = await openai.chat.completions.create({
     model: "gpt-4o-mini",
     stream: true,
@@ -128,10 +150,7 @@ export async function POST(request: Request) {
     messages: [
       {
         role: "system",
-        content:
-          "Tu es un assistant de développement. Tu réponds en français lorsque l'utilisateur écrit en français. " +
-          "Les utilisateurs peuvent joindre des fichiers (texte, code, images, PDF, binaires). " +
-          "Pour les binaires non décodés, indique qu'il faut une autre représentation si une analyse fine est nécessaire.",
+        content: systemContent,
       },
       {
         role: "user",

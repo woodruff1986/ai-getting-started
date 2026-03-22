@@ -4,7 +4,10 @@ import Link from "next/link";
 import {
   ArrowRight,
   BookOpen,
+  Bot,
+  Github,
   MessageCircle,
+  Puzzle,
   Sparkles,
   Terminal,
 } from "lucide-react";
@@ -23,6 +26,27 @@ const cards = [
     href: "/skale/guide",
     icon: BookOpen,
     cta: "Ouvrir",
+  },
+  {
+    title: "Agents prédéfinis",
+    desc: "Personas (dev, revue, archi, debug, docs, sécurité) — choix partagé avec le chat.",
+    href: "/skale/agents",
+    icon: Bot,
+    cta: "Configurer",
+  },
+  {
+    title: "Skills",
+    desc: "Consignes métier persistées dans le navigateur, injectées dans chaque message.",
+    href: "/skale/skills",
+    icon: Puzzle,
+    cta: "Gérer",
+  },
+  {
+    title: "GitHub → Cursor",
+    desc: "Analyse de dépôts publics et guide d’intégration (clone, Composer, .cursor/rules).",
+    href: "/skale/tech",
+    icon: Github,
+    cta: "Ajouter",
   },
   {
     title: "Démos du dépôt",

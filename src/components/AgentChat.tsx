@@ -2,6 +2,7 @@
 
 import {
   useCallback,
+  useEffect,
   useId,
   useRef,
   useState,
@@ -9,6 +10,10 @@ import {
   type KeyboardEvent,
 } from "react";
 import clsx from "clsx";
+import Link from "next/link";
+import { useDeskSkills } from "@/hooks/useDeskSkills";
+import { DESK_AGENTS, DEFAULT_DESK_AGENT_ID } from "@/lib/deskAgents";
+import { DESK_AGENT_STORAGE_KEY } from "@/lib/deskSkillsTypes";
 
 type AttachedFile = {
   id: string;
@@ -49,13 +54,33 @@ function downloadText(content: string, filename: string) {
 
 export default function AgentChat({ embedded = false }: { embedded?: boolean }) {
   const inputId = useId();
+  const agentSelectId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { skills, ready: skillsReady } = useDeskSkills();
+  const [agentId, setAgentId] = useState(DEFAULT_DESK_AGENT_ID);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<AttachedFile[]>([]);
   const [assistantDraft, setAssistantDraft] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+
+  useEffect(() => {
+    try {
+      const s = localStorage.getItem(DESK_AGENT_STORAGE_KEY);
+      if (s && DESK_AGENTS.some((a) => a.id === s)) setAgentId(s);
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(DESK_AGENT_STORAGE_KEY, agentId);
+    } catch {
+      /* ignore */
+    }
+  }, [agentId]);
 
   const addFiles = useCallback((list: FileList | File[]) => {
     const arr = Array.from(list);
@@ -104,6 +129,18 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
 
     const fd = new FormData();
     fd.append("prompt", userMsg.content);
+    fd.append("agentId", agentId);
+    fd.append(
+      "skills",
+      JSON.stringify(
+        skillsReady
+          ? skills.map((s) => ({
+              name: s.name,
+              instruction: s.instruction,
+            }))
+          : [],
+      ),
+    );
     for (const { file } of userFiles) {
       fd.append("files", file, file.name);
     }
@@ -164,7 +201,7 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
     } finally {
       setIsSending(false);
     }
-  }, [attachments, input]);
+  }, [attachments, input, agentId, skills, skillsReady]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -238,6 +275,66 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
             </button>
           )}
         </div>
+      </div>
+
+      <div
+        className={clsx(
+          "flex flex-wrap items-center gap-3 border-b px-4 py-2.5 sm:px-8",
+          embedded
+            ? "border-[var(--border)] bg-[var(--surface-light)]"
+            : "border-white/10 bg-slate-900/50",
+        )}
+      >
+        <label
+          htmlFor={agentSelectId}
+          className={clsx(
+            "text-xs font-medium uppercase tracking-wide",
+            embedded ? "text-[color:var(--text-muted)]" : "text-slate-500",
+          )}
+        >
+          Agent
+        </label>
+        <select
+          id={agentSelectId}
+          value={agentId}
+          onChange={(e) => setAgentId(e.target.value)}
+          className={clsx(
+            "max-w-[min(100%,220px)] rounded-lg border px-2 py-1.5 text-sm outline-none focus:ring-2",
+            embedded
+              ? "border-[var(--border)] bg-[var(--background)] text-[color:var(--text-primary)] focus:ring-[var(--ring)]"
+              : "border-white/15 bg-black/30 text-white focus:ring-sky-500",
+          )}
+        >
+          {DESK_AGENTS.map((a) => (
+            <option key={a.id} value={a.id}>
+              {a.label}
+            </option>
+          ))}
+        </select>
+        <span
+          className={clsx(
+            "text-xs",
+            embedded ? "text-[color:var(--text-muted)]" : "text-slate-500",
+          )}
+        >
+          {skillsReady
+            ? skills.length > 0
+              ? `${skills.length} skill(s) actif(s)`
+              : "Aucun skill"
+            : "Skills…"}
+        </span>
+        {skillsReady && skills.length === 0 && (
+          <Link
+            href="/skale/skills"
+            className={
+              embedded
+                ? "text-xs font-medium text-[var(--accent)] hover:underline"
+                : "text-xs font-medium text-sky-400 hover:text-sky-300"
+            }
+          >
+            Ajouter des skills
+          </Link>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col overflow-hidden">

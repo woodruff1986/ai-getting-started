@@ -11,13 +11,16 @@ import {
 import clsx from "clsx";
 import {
   BookOpen,
+  Bot,
   ChevronLeft,
   ChevronRight,
   ExternalLink,
+  Github,
   LayoutDashboard,
   Menu,
   MessageCircle,
   Moon,
+  Puzzle,
   Sparkles,
   Sun,
   X,
@@ -36,6 +39,12 @@ const PRIMARY_NAV: NavItem[] = [
   { href: "/skale", label: "Tableau", icon: LayoutDashboard },
   { href: "/skale/chat", label: "Agent & fichiers", icon: MessageCircle },
   { href: "/skale/guide", label: "Guide Cursor", icon: BookOpen },
+];
+
+const CONFIG_NAV: NavItem[] = [
+  { href: "/skale/agents", label: "Agents", icon: Bot },
+  { href: "/skale/skills", label: "Skills", icon: Puzzle },
+  { href: "/skale/tech", label: "GitHub → Cursor", icon: Github },
 ];
 
 const SECONDARY_NAV: NavItem[] = [
@@ -79,6 +88,9 @@ export default function SkaleShell({ children }: { children: ReactNode }) {
     if (pathname === "/skale") return "Tableau";
     if (pathname === "/skale/chat") return "Agent & fichiers";
     if (pathname === "/skale/guide") return "Guide Cursor";
+    if (pathname === "/skale/agents") return "Agents";
+    if (pathname === "/skale/skills") return "Skills";
+    if (pathname === "/skale/tech") return "GitHub → Cursor";
     return "Desk";
   })();
 
@@ -148,6 +160,29 @@ export default function SkaleShell({ children }: { children: ReactNode }) {
                 item.href === "/skale"
                   ? pathname === "/skale"
                   : pathname.startsWith(item.href);
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={clsx(
+                    "skale-nav-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
+                    active
+                      ? "bg-[var(--accent-muted)] text-[var(--accent)]"
+                      : "text-[var(--text-secondary)] hover:bg-[var(--surface-hover)] hover:text-[var(--text-primary)]",
+                  )}
+                >
+                  <Icon className="h-[18px] w-[18px] shrink-0 opacity-90" />
+                  <span className="skale-nav-label truncate">{item.label}</span>
+                </Link>
+              );
+            })}
+
+            <p className="skale-section-label px-2 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-muted)]">
+              Configuration
+            </p>
+            {CONFIG_NAV.map((item) => {
+              const active = pathname.startsWith(item.href);
               const Icon = item.icon;
               return (
                 <Link
