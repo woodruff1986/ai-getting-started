@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  ...(process.env.ELECTRON_STANDALONE === "1" ? { output: "standalone" } : {}),
   images: {
     remotePatterns: [
       {

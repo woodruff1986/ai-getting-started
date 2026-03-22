@@ -1,0 +1,205 @@
+/* Desk UI: independent layout inspired by common patterns in local-agent apps.
+   Not affiliated with Skales; no code copied from github.com/skalesapp/skales */
+
+.skale-app[data-theme="dark"] {
+  --background: #09090b;
+  --surface: #18181b;
+  --surface-light: #27272a;
+  --surface-hover: #303035;
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --border: #27272a;
+  --accent: #84cc16;
+  --accent-hover: #a3e635;
+  --accent-muted: rgba(132, 204, 22, 0.12);
+  --ring: #84cc16;
+}
+
+.skale-app[data-theme="light"] {
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-light: #f1f5f9;
+  --surface-hover: #e8edf3;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --border: #e2e8f0;
+  --accent: #65a30d;
+  --accent-hover: #84cc16;
+  --accent-muted: rgba(132, 204, 22, 0.15);
+  --ring: #84cc16;
+}
+
+.skale-app {
+  font-family: inherit;
+  background: var(--background);
+  color: var(--text-primary);
+}
+
+.skale-app .skale-shell {
+  display: flex;
+  height: 100%;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.skale-app .skale-sidebar {
+  width: 260px;
+  min-width: 260px;
+  flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  z-index: 40;
+}
+
+.skale-app .skale-sidebar-collapsed {
+  width: 72px;
+  min-width: 72px;
+}
+
+.skale-app .skale-sidebar-collapsed .skale-nav-label,
+.skale-app .skale-sidebar-collapsed .skale-brand-sub,
+.skale-app .skale-sidebar-collapsed .skale-section-label {
+  display: none;
+}
+
+.skale-app .skale-sidebar-collapsed .skale-nav-item {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.skale-app .skale-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--background);
+}
+
+.skale-app .skale-main-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cursor guide embedded in Desk: map slate/sky UI to theme tokens */
+.skale-app .skale-guide-embed .text-white {
+  color: var(--text-primary) !important;
+}
+
+.skale-app .skale-guide-embed .text-slate-100,
+.skale-app .skale-guide-embed .text-slate-200 {
+  color: var(--text-primary) !important;
+}
+
+.skale-app .skale-guide-embed .text-slate-300,
+.skale-app .skale-guide-embed .text-slate-400 {
+  color: var(--text-secondary) !important;
+}
+
+.skale-app .skale-guide-embed .text-slate-500 {
+  color: var(--text-muted) !important;
+}
+
+.skale-app .skale-guide-embed [class*="text-sky-"] {
+  color: var(--accent) !important;
+}
+
+.skale-app .skale-guide-embed [class*="border-white/"] {
+  border-color: var(--border) !important;
+}
+
+.skale-app .skale-guide-embed [class*="bg-white/"] {
+  background-color: var(--surface) !important;
+}
+
+.skale-app .skale-guide-embed [class*="hover:border-sky-"] {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--border)) !important;
+}
+
+.skale-app .skale-guide-embed [class*="hover:bg-white/"]:hover {
+  background-color: var(--surface-hover) !important;
+}
+
+.skale-app .skale-guide-embed [class*="bg-sky-"] {
+  background-color: var(--accent-muted) !important;
+}
+
+.skale-app .skale-guide-embed [class*="bg-black/"] {
+  background-color: var(--surface-light) !important;
+}
+
+.skale-app .skale-guide-embed [class*="bg-emerald-"] {
+  background-color: var(--accent-muted) !important;
+}
+
+.skale-app .skale-guide-embed [class*="text-emerald-"] {
+  color: var(--accent) !important;
+}
+
+.skale-app .skale-topbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+@media (max-width: 768px) {
+  .skale-app .skale-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
+  .skale-app .skale-sidebar.skale-sidebar-open {
+    transform: translateX(0);
+  }
+
+  .skale-app .skale-main {
+    width: 100%;
+  }
+}
+
+.skale-app ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.skale-app ::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 999px;
+}
+
+.skale-app ::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+@keyframes skale-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.skale-app .skale-animate-in {
+  animation: skale-fade-in 0.35s ease-out forwards;
+}

@@ -1,0 +1,28 @@
+Desk Cursor — installation (Windows)
+=====================================
+
+1) Node.js (recommandé)
+   Si l’application ne démarre pas, installe Node.js LTS 20+ depuis https://nodejs.org
+   (l’installeur utilise « node » du PATH pour lancer le serveur Next.js intégré).
+
+2) Variables d’environnement (Clerk, OpenAI, Arcjet, etc.)
+   Copie ton fichier .env.local dans le dossier suivant (après installation) :
+   C:\Users\<toi>\AppData\Local\Programs\Desk Cursor\resources\standalone\
+   (le chemin exact peut varier selon le dossier choisi à l’installation)
+
+   Redémarre l’application après modification.
+
+3) Port
+   Par défaut le serveur écoute sur 127.0.0.1:3847.
+   Pour changer : variable d’environnement système DESK_PORT puis relancer l’app.
+
+4) PC fixe et portable
+   Installe le même .exe sur chaque machine ; tu peux réutiliser le même fichier .env.local
+   si tes clés API sont identiques (attention aux limites de taux).
+
+5) Construire l’installeur .exe
+   Lance sur une machine Windows (PowerShell ou cmd) :
+     npm install
+     npm run dist:win
+   Le fichier Setup se trouve dans le dossier release/
+   (les modules natifs Windows doivent être compilés sur Windows pour un binaire fiable).
