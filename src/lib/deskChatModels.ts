@@ -1,17 +1,19 @@
-/**
- * Libellés alignés sur l’app Cursor : ce Desk route les modèles « activés »
- * vers l’API OpenAI. Les entrées désactivées servent de référence (autres moteurs).
- */
+import type { DeskApiKeyField } from "./deskApiKeysStorage";
+import type { SanitizedClientApiKeys } from "./parseClientApiKeys";
+
+export type DeskModelProvider = "openai" | "anthropic" | "google" | "none";
 
 export type DeskChatModel = {
   id: string;
-  /** Nom affiché comme dans Cursor */
   cursorLabel: string;
   subtitle?: string;
-  /** Modèle réel côté OpenAI (chat completions) */
+  provider: DeskModelProvider;
+  /** Identifiant moteur côté fournisseur */
   apiModel: string;
-  enabled: boolean;
-  disabledReason?: string;
+  /** Champ clé à renseigner dans le Desk (affichage / UX) */
+  keyField?: DeskApiKeyField;
+  /** Modèles « référence seulement » (provider none) */
+  referenceNote?: string;
 };
 
 export const DEFAULT_DESK_CHAT_MODEL_ID = "composer-2";
@@ -20,105 +22,131 @@ export const DESK_CHAT_MODELS: DeskChatModel[] = [
   {
     id: "composer-2",
     cursorLabel: "Composer 2",
-    subtitle: "Modèle par défaut du Desk — usage type Composer dans Cursor",
+    subtitle: "Défaut — OpenAI gpt-4o",
+    provider: "openai",
     apiModel: "gpt-4o",
-    enabled: true,
   },
   {
     id: "fast",
     cursorLabel: "Fast",
-    subtitle: "Réponses rapides, coût réduit",
+    subtitle: "OpenAI gpt-4o-mini",
+    provider: "openai",
     apiModel: "gpt-4o-mini",
-    enabled: true,
   },
   {
     id: "gpt-4o",
     cursorLabel: "GPT-4o",
+    provider: "openai",
     apiModel: "gpt-4o",
-    enabled: true,
   },
   {
     id: "gpt-4o-mini",
     cursorLabel: "GPT-4o mini",
+    provider: "openai",
     apiModel: "gpt-4o-mini",
-    enabled: true,
   },
   {
     id: "gpt-4-turbo",
     cursorLabel: "GPT-4 Turbo",
+    provider: "openai",
     apiModel: "gpt-4-turbo",
-    enabled: true,
   },
   {
     id: "gpt-3.5-turbo",
     cursorLabel: "GPT-3.5 Turbo",
+    provider: "openai",
     apiModel: "gpt-3.5-turbo",
-    enabled: true,
   },
   {
     id: "claude-3.5-sonnet",
     cursorLabel: "Claude 3.5 Sonnet",
-    apiModel: "",
-    enabled: false,
-    disabledReason: "Réservé à Cursor IDE ou à une clé Anthropic (non branchée ici).",
+    subtitle: "Clé Anthropic (navigateur ou serveur)",
+    provider: "anthropic",
+    apiModel: "claude-3-5-sonnet-20241022",
+    keyField: "anthropic",
   },
   {
     id: "claude-3.5-haiku",
     cursorLabel: "Claude 3.5 Haiku",
-    apiModel: "",
-    enabled: false,
-    disabledReason: "Réservé à Cursor IDE ou à une clé Anthropic (non branchée ici).",
+    provider: "anthropic",
+    apiModel: "claude-3-5-haiku-20241022",
+    keyField: "anthropic",
   },
   {
     id: "claude-3-opus",
     cursorLabel: "Claude 3 Opus",
-    apiModel: "",
-    enabled: false,
-    disabledReason: "Réservé à Cursor IDE ou à une clé Anthropic (non branchée ici).",
+    provider: "anthropic",
+    apiModel: "claude-3-opus-20240229",
+    keyField: "anthropic",
   },
   {
     id: "gemini-1.5-pro",
     cursorLabel: "Gemini 1.5 Pro",
-    apiModel: "",
-    enabled: false,
-    disabledReason: "Réservé à Cursor IDE ou à l’API Google (non branchée ici).",
+    subtitle: "Clé Google AI (navigateur ou serveur)",
+    provider: "google",
+    apiModel: "gemini-1.5-pro",
+    keyField: "google",
   },
   {
     id: "gemini-1.5-flash",
     cursorLabel: "Gemini 1.5 Flash",
-    apiModel: "",
-    enabled: false,
-    disabledReason: "Réservé à Cursor IDE ou à l’API Google (non branchée ici).",
+    provider: "google",
+    apiModel: "gemini-1.5-flash",
+    keyField: "google",
   },
   {
     id: "o1",
     cursorLabel: "o1",
+    provider: "none",
     apiModel: "",
-    enabled: false,
-    disabledReason:
-      "Famille o1 : format d’API différent (raisonnement) — utilise Cursor ou un flux dédié.",
+    referenceNote:
+      "Famille o1 : format d’API dédié — utilise Cursor ou un flux spécifique.",
   },
   {
     id: "o1-mini",
     cursorLabel: "o1-mini",
+    provider: "none",
     apiModel: "",
-    enabled: false,
-    disabledReason:
-      "Famille o1 : format d’API différent — utilise Cursor ou un flux dédié.",
+    referenceNote:
+      "Famille o1-mini : idem, non routé dans ce Desk.",
   },
 ];
 
-export function getEnabledDeskChatModels(): DeskChatModel[] {
-  return DESK_CHAT_MODELS.filter((m) => m.enabled);
+export function getSelectableDeskChatModels(): DeskChatModel[] {
+  return DESK_CHAT_MODELS.filter((m) => m.provider !== "none");
 }
 
 export function getReferenceDeskChatModels(): DeskChatModel[] {
-  return DESK_CHAT_MODELS.filter((m) => !m.enabled);
+  return DESK_CHAT_MODELS.filter((m) => m.provider === "none");
 }
 
-export function resolveDeskChatModelForApi(
+export type ResolvedDeskChatModel =
+  | {
+      ok: true;
+      provider: "openai";
+      apiModel: string;
+      label: string;
+      apiKey: string;
+    }
+  | {
+      ok: true;
+      provider: "anthropic";
+      apiModel: string;
+      label: string;
+      apiKey: string;
+    }
+  | {
+      ok: true;
+      provider: "google";
+      apiModel: string;
+      label: string;
+      apiKey: string;
+    };
+
+export function resolveDeskChatModelForRequest(
   modelId: string | null | undefined,
-): { ok: true; apiModel: string; label: string } | { ok: false; error: string } {
+  clientKeys: SanitizedClientApiKeys,
+): ResolvedDeskChatModel | { ok: false; error: string } {
   const id =
     typeof modelId === "string" && modelId.trim()
       ? modelId.trim()
@@ -128,14 +156,77 @@ export function resolveDeskChatModelForApi(
   if (!entry) {
     return { ok: false, error: "Modèle inconnu." };
   }
-  if (!entry.enabled || !entry.apiModel) {
+  if (entry.provider === "none") {
     return {
       ok: false,
       error:
-        "Ce modèle n’est pas disponible via l’API OpenAI du Desk — choisis un modèle activé ou utilise Cursor.",
+        "Ce modèle n’est pas disponible dans le Desk (famille o1). Utilise Cursor ou un modèle listé ci-dessus.",
     };
   }
-  return { ok: true, apiModel: entry.apiModel, label: entry.cursorLabel };
+
+  if (entry.provider === "openai") {
+    const apiKey =
+      clientKeys.openai?.trim() || process.env.OPENAI_API_KEY?.trim() || "";
+    if (!apiKey) {
+      return {
+        ok: false,
+        error:
+          "Clé OpenAI manquante. Ouvre « Clés API » dans le chat ou définis OPENAI_API_KEY sur le serveur.",
+      };
+    }
+    return {
+      ok: true,
+      provider: "openai",
+      apiModel: entry.apiModel,
+      label: entry.cursorLabel,
+      apiKey,
+    };
+  }
+
+  if (entry.provider === "anthropic") {
+    const apiKey =
+      clientKeys.anthropic?.trim() ||
+      process.env.ANTHROPIC_API_KEY?.trim() ||
+      "";
+    if (!apiKey) {
+      return {
+        ok: false,
+        error:
+          "Clé API Anthropic manquante. Clique sur « Clés API » et renseigne la clé, ou définis ANTHROPIC_API_KEY sur le serveur.",
+      };
+    }
+    return {
+      ok: true,
+      provider: "anthropic",
+      apiModel: entry.apiModel,
+      label: entry.cursorLabel,
+      apiKey,
+    };
+  }
+
+  if (entry.provider === "google") {
+    const apiKey =
+      clientKeys.google?.trim() ||
+      process.env.GOOGLE_GENERATIVE_AI_API_KEY?.trim() ||
+      process.env.GEMINI_API_KEY?.trim() ||
+      "";
+    if (!apiKey) {
+      return {
+        ok: false,
+        error:
+          "Clé API Google AI manquante. Utilise « Clés API » ou GOOGLE_GENERATIVE_AI_API_KEY / GEMINI_API_KEY sur le serveur.",
+      };
+    }
+    return {
+      ok: true,
+      provider: "google",
+      apiModel: entry.apiModel,
+      label: entry.cursorLabel,
+      apiKey,
+    };
+  }
+
+  return { ok: false, error: "Fournisseur non pris en charge." };
 }
 
 export function getDeskChatModelLabel(id: string): string {

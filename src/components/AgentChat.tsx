@@ -11,14 +11,17 @@ import {
 } from "react";
 import clsx from "clsx";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
+import { KeyRound, Sparkles } from "lucide-react";
 import { useDeskSkills } from "@/hooks/useDeskSkills";
+import { useDeskApiKeys } from "@/hooks/useDeskApiKeys";
 import { DESK_AGENTS, DEFAULT_DESK_AGENT_ID } from "@/lib/deskAgents";
 import {
   DEFAULT_DESK_CHAT_MODEL_ID,
   getDeskChatModelLabel,
-  getEnabledDeskChatModels,
+  getSelectableDeskChatModels,
 } from "@/lib/deskChatModels";
+import type { DeskApiKeyField } from "@/lib/deskApiKeysStorage";
+import DeskApiKeysModal from "@/components/skale/DeskApiKeysModal";
 import {
   DESK_AGENT_STORAGE_KEY,
   DESK_CHAT_MODEL_STORAGE_KEY,
@@ -67,9 +70,12 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
   const agentSelectId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { skills, ready: skillsReady } = useDeskSkills();
+  const deskApiKeys = useDeskApiKeys();
   const [agentId, setAgentId] = useState(DEFAULT_DESK_AGENT_ID);
   const [modelId, setModelId] = useState(DEFAULT_DESK_CHAT_MODEL_ID);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
+  const [keysModalOpen, setKeysModalOpen] = useState(false);
+  const [keysFocus, setKeysFocus] = useState<DeskApiKeyField | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [attachments, setAttachments] = useState<AttachedFile[]>([]);
@@ -97,10 +103,7 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
   useEffect(() => {
     try {
       const s = localStorage.getItem(DESK_CHAT_MODEL_STORAGE_KEY);
-      if (
-        s &&
-        getEnabledDeskChatModels().some((m) => m.id === s)
-      ) {
+      if (s && getSelectableDeskChatModels().some((m) => m.id === s)) {
         setModelId(s);
       }
     } catch {
@@ -166,6 +169,14 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
     fd.append("agentId", agentId);
     fd.append("modelId", modelId);
     fd.append(
+      "apiKeys",
+      JSON.stringify({
+        openai: deskApiKeys.keys.openai,
+        anthropic: deskApiKeys.keys.anthropic,
+        google: deskApiKeys.keys.google,
+      }),
+    );
+    fd.append(
       "skills",
       JSON.stringify(
         skillsReady
@@ -190,13 +201,20 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
         const err = (await res.json().catch(() => null)) as {
           error?: string;
         } | null;
+        const msg = err?.error ?? "";
+        if (
+          typeof msg === "string" &&
+          /clé|Clé|manquant|API|Anthropic|Google/i.test(msg)
+        ) {
+          setKeysModalOpen(true);
+        }
         setAssistantDraft(null);
         setMessages((m) => [
           ...m,
           {
             id: crypto.randomUUID(),
             role: "assistant",
-            content: `Erreur (${res.status}) : ${err?.error || "requête refusée"}`,
+            content: `Erreur (${res.status}) : ${msg || "requête refusée"}`,
           },
         ]);
         return;
@@ -236,7 +254,15 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
     } finally {
       setIsSending(false);
     }
-  }, [attachments, input, agentId, modelId, skills, skillsReady]);
+  }, [
+    attachments,
+    input,
+    agentId,
+    modelId,
+    skills,
+    skillsReady,
+    deskApiKeys.keys,
+  ]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -378,6 +404,27 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
             )}
           />
           <span className="truncate">{getDeskChatModelLabel(modelId)}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setKeysFocus(null);
+            setKeysModalOpen(true);
+          }}
+          className={clsx(
+            "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium",
+            embedded
+              ? "border-[var(--border)] bg-[var(--background)] text-[color:var(--text-primary)] hover:bg-[var(--surface-hover)]"
+              : "border-white/15 bg-black/30 text-slate-200 hover:bg-black/40",
+          )}
+        >
+          <KeyRound
+            className={clsx(
+              "h-3.5 w-3.5",
+              embedded ? "text-[var(--accent)]" : "text-sky-400",
+            )}
+          />
+          Clés API
         </button>
         <span
           className={clsx(
@@ -825,6 +872,26 @@ export default function AgentChat({ embedded = false }: { embedded?: boolean }) 
         value={modelId}
         onSelect={setModelId}
         embedded={embedded}
+        apiKeys={deskApiKeys.keys}
+        onRequestKeys={(field) => {
+          setModelPickerOpen(false);
+          setKeysFocus(field);
+          setKeysModalOpen(true);
+        }}
+      />
+
+      <DeskApiKeysModal
+        open={keysModalOpen}
+        onClose={() => {
+          setKeysModalOpen(false);
+          setKeysFocus(null);
+        }}
+        initialFocus={keysFocus}
+        embedded={embedded}
+        keys={deskApiKeys.keys}
+        onFieldChange={deskApiKeys.updateField}
+        onSave={deskApiKeys.save}
+        onClear={deskApiKeys.clearAll}
       />
     </div>
   );

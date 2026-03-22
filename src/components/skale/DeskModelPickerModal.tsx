@@ -5,10 +5,11 @@ import { Dialog, Transition } from "@headlessui/react";
 import clsx from "clsx";
 import {
   DEFAULT_DESK_CHAT_MODEL_ID,
-  getEnabledDeskChatModels,
   getReferenceDeskChatModels,
+  getSelectableDeskChatModels,
   type DeskChatModel,
 } from "@/lib/deskChatModels";
+import type { DeskApiKeyField, DeskApiKeysState } from "@/lib/deskApiKeysStorage";
 import { Sparkles, X } from "lucide-react";
 
 type Props = {
@@ -17,7 +18,13 @@ type Props = {
   value: string;
   onSelect: (id: string) => void;
   embedded?: boolean;
+  apiKeys: DeskApiKeysState;
+  onRequestKeys: (field: DeskApiKeyField) => void;
 };
+
+function byProvider(models: DeskChatModel[], p: DeskChatModel["provider"]) {
+  return models.filter((m) => m.provider === p);
+}
 
 export default function DeskModelPickerModal({
   open,
@@ -25,17 +32,21 @@ export default function DeskModelPickerModal({
   value,
   onSelect,
   embedded = false,
+  apiKeys,
+  onRequestKeys,
 }: Props) {
-  const enabled = getEnabledDeskChatModels();
+  const selectable = getSelectableDeskChatModels();
+  const openaiList = byProvider(selectable, "openai");
+  const anthropicList = byProvider(selectable, "anthropic");
+  const googleList = byProvider(selectable, "google");
   const reference = getReferenceDeskChatModels();
 
   const pick = (m: DeskChatModel) => {
-    if (!m.enabled) return;
     onSelect(m.id);
     onClose();
   };
 
-  const cardBase = (active: boolean, clickable: boolean) =>
+  const cardBase = (active: boolean) =>
     clsx(
       "w-full rounded-xl border p-4 text-left transition",
       embedded
@@ -45,8 +56,107 @@ export default function DeskModelPickerModal({
         : active
           ? "border-sky-500/50 bg-sky-500/10"
           : "border-white/10 bg-white/[0.04] hover:bg-white/[0.07]",
-      clickable ? "cursor-pointer" : "cursor-not-allowed opacity-55",
     );
+
+  const needsBrowserKey = (m: DeskChatModel): DeskApiKeyField | null => {
+    if (m.provider === "anthropic" && !apiKeys.anthropic.trim()) {
+      return "anthropic";
+    }
+    if (m.provider === "google" && !apiKeys.google.trim()) {
+      return "google";
+    }
+    return null;
+  };
+
+  const renderModelCard = (m: DeskChatModel) => {
+    const active = m.id === value;
+    const isDefault = m.id === DEFAULT_DESK_CHAT_MODEL_ID;
+    const keyGap = needsBrowserKey(m);
+
+    return (
+      <li key={m.id} className="space-y-2">
+        <button
+          type="button"
+          onClick={() => pick(m)}
+          className={cardBase(active)}
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span
+              className={clsx(
+                "font-medium",
+                embedded
+                  ? "text-[color:var(--text-primary)]"
+                  : "text-white",
+              )}
+            >
+              {m.cursorLabel}
+            </span>
+            {isDefault && (
+              <span
+                className={clsx(
+                  "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
+                  embedded
+                    ? "bg-[var(--accent-muted)] text-[var(--accent)]"
+                    : "bg-sky-500/20 text-sky-300",
+                )}
+              >
+                Défaut
+              </span>
+            )}
+          </div>
+          {m.subtitle && (
+            <p
+              className={clsx(
+                "mt-1 text-xs",
+                embedded
+                  ? "text-[color:var(--text-muted)]"
+                  : "text-slate-500",
+              )}
+            >
+              {m.subtitle}
+            </p>
+          )}
+          <p
+            className={clsx(
+              "mt-2 font-mono text-[10px]",
+              embedded ? "text-[color:var(--text-muted)]" : "text-slate-600",
+            )}
+          >
+            {m.provider === "openai" && `OpenAI · ${m.apiModel}`}
+            {m.provider === "anthropic" && `Anthropic · ${m.apiModel}`}
+            {m.provider === "google" && `Google AI · ${m.apiModel}`}
+          </p>
+        </button>
+        {keyGap && (
+          <button
+            type="button"
+            onClick={() => onRequestKeys(keyGap)}
+            className={clsx(
+              "w-full rounded-lg px-3 py-2 text-left text-xs font-medium",
+              embedded
+                ? "bg-amber-500/10 text-amber-600 hover:bg-amber-500/15"
+                : "bg-amber-500/15 text-amber-200 hover:bg-amber-500/25",
+            )}
+          >
+            Aucune clé {keyGap === "anthropic" ? "Anthropic" : "Google AI"}{" "}
+            dans le navigateur — ouvrir « Clés API » (le serveur peut aussi
+            fournir la clé).
+          </button>
+        )}
+      </li>
+    );
+  };
+
+  const sectionTitle = (t: string) => (
+    <p
+      className={clsx(
+        "mb-3 text-xs font-semibold uppercase tracking-wide",
+        embedded ? "text-[color:var(--text-muted)]" : "text-slate-500",
+      )}
+    >
+      {t}
+    </p>
+  );
 
   return (
     <Transition.Root show={open} as={Fragment}>
@@ -113,9 +223,10 @@ export default function DeskModelPickerModal({
                           : "text-slate-400",
                       )}
                     >
-                      Noms comme dans Cursor. Ce Desk envoie les modèles
-                      activés vers <strong>OpenAI</strong> ; les autres restent
-                      pour référence (IDE Cursor ou autres APIs).
+                      OpenAI, Claude et Gemini selon les clés (navigateur ou
+                      variables d’environnement serveur). Les pièces jointes
+                      (fichiers / images) ne sont prises en charge qu’avec les
+                      modèles OpenAI.
                     </p>
                   </div>
                   <button
@@ -133,94 +244,35 @@ export default function DeskModelPickerModal({
                   </button>
                 </div>
 
-                <div className="max-h-[min(70vh,520px)] overflow-y-auto px-5 py-4">
-                  <p
-                    className={clsx(
-                      "mb-3 text-xs font-semibold uppercase tracking-wide",
-                      embedded
-                        ? "text-[color:var(--text-muted)]"
-                        : "text-slate-500",
-                    )}
-                  >
-                    Disponibles (API OpenAI)
-                  </p>
-                  <ul className="space-y-2">
-                    {enabled.map((m) => {
-                      const active = m.id === value;
-                      const isDefault = m.id === DEFAULT_DESK_CHAT_MODEL_ID;
-                      return (
-                        <li key={m.id}>
-                          <button
-                            type="button"
-                            onClick={() => pick(m)}
-                            className={cardBase(active, true)}
-                          >
-                            <div className="flex items-center justify-between gap-2">
-                              <span
-                                className={clsx(
-                                  "font-medium",
-                                  embedded
-                                    ? "text-[color:var(--text-primary)]"
-                                    : "text-white",
-                                )}
-                              >
-                                {m.cursorLabel}
-                              </span>
-                              {isDefault && (
-                                <span
-                                  className={clsx(
-                                    "rounded-full px-2 py-0.5 text-[10px] font-bold uppercase",
-                                    embedded
-                                      ? "bg-[var(--accent-muted)] text-[var(--accent)]"
-                                      : "bg-sky-500/20 text-sky-300",
-                                  )}
-                                >
-                                  Défaut
-                                </span>
-                              )}
-                            </div>
-                            {m.subtitle && (
-                              <p
-                                className={clsx(
-                                  "mt-1 text-xs",
-                                  embedded
-                                    ? "text-[color:var(--text-muted)]"
-                                    : "text-slate-500",
-                                )}
-                              >
-                                {m.subtitle}
-                              </p>
-                            )}
-                            <p
-                              className={clsx(
-                                "mt-2 font-mono text-[10px]",
-                                embedded
-                                  ? "text-[color:var(--text-muted)]"
-                                  : "text-slate-600",
-                              )}
-                            >
-                              API : {m.apiModel}
-                            </p>
-                          </button>
-                        </li>
-                      );
-                    })}
+                <div className="max-h-[min(70vh,560px)] overflow-y-auto px-5 py-4">
+                  {sectionTitle("OpenAI")}
+                  <ul className="mb-6 space-y-2">
+                    {openaiList.map((m) => renderModelCard(m))}
                   </ul>
 
-                  <p
-                    className={clsx(
-                      "mb-3 mt-8 text-xs font-semibold uppercase tracking-wide",
-                      embedded
-                        ? "text-[color:var(--text-muted)]"
-                        : "text-slate-500",
-                    )}
-                  >
-                    Référence — comme dans Cursor (non routés ici)
-                  </p>
+                  {sectionTitle("Claude · Anthropic")}
+                  <ul className="mb-6 space-y-2">
+                    {anthropicList.map((m) => renderModelCard(m))}
+                  </ul>
+
+                  {sectionTitle("Gemini · Google AI")}
+                  <ul className="mb-6 space-y-2">
+                    {googleList.map((m) => renderModelCard(m))}
+                  </ul>
+
+                  {sectionTitle("Non disponibles dans ce Desk")}
                   <ul className="space-y-2">
                     {reference.map((m) => (
                       <li key={m.id}>
-                        <div className={cardBase(false, false)} role="note">
+                        <div
+                          className={clsx(
+                            "rounded-xl border p-4",
+                            embedded
+                              ? "border-[var(--border)] bg-[var(--surface)]"
+                              : "border-white/10 bg-white/[0.04]",
+                          )}
+                          role="note"
+                        >
                           <span
                             className={clsx(
                               "font-medium",
@@ -239,7 +291,7 @@ export default function DeskModelPickerModal({
                                 : "text-slate-500",
                             )}
                           >
-                            {m.disabledReason}
+                            {m.referenceNote}
                           </p>
                         </div>
                       </li>

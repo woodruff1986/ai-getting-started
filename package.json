@@ -11,8 +11,10 @@
     "generate-embeddings-supabase": "node src/scripts/indexBlogPGVector.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
     "@arcjet/next": "^1.0.0-alpha.13",
     "@clerk/nextjs": "^5.1.4",
+    "@google/generative-ai": "^0.24.1",
     "@headlessui/react": "^1.7.15",
     "@pinecone-database/pinecone": "^2.2.2",
     "@supabase/supabase-js": "^2.25.0",
