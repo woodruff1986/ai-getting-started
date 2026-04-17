@@ -1,0 +1,24 @@
+project:
+  title: "Versailles Episode Draft"
+  fps: 24
+  shot_duration_seconds: 4
+  resolution:
+    width: 1280
+    height: 720
+
+comfyui:
+  base_url: "http://127.0.0.1:8188"
+  workflow_path: "video-pipeline/workflows/cogvideox-text2video.json"
+  output_node_id: "9"
+
+render:
+  prompt_prefix: "cinematic period drama, TV series look, realistic lighting"
+  negative_prompt: "blurry, low quality, deformed faces, extra limbs, text artifacts"
+  seed_start: 1000
+  steps: 30
+  cfg: 6.0
+
+audio:
+  background_track: ""
+  voiceover_track: ""
+

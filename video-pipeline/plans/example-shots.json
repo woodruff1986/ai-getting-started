@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "source": "video-pipeline/dialogues/example-dialogue.md",
+  "fps": 24,
+  "scenes": [
+    {
+      "title": "Cour de marbre",
+      "location": "EXT. Versailles - Cour de marbre",
+      "time": "Jour",
+      "shot": "Plan moyen, travelling lateral sur Rose",
+      "action": "Rose serre son coffret et contourne les portes.",
+      "characters": [
+        "Rose Bertin",
+        "Garde suisse"
+      ],
+      "dialogue": [
+        {
+          "speaker": "ROSE",
+          "line": "C'est pour la Reine."
+        },
+        {
+          "speaker": "GARDE",
+          "line": "Pas par ici, la marchande."
+        }
+      ],
+      "duration_seconds": 4.0,
+      "id": "scene_01",
+      "index": 1
+    },
+    {
+      "title": "Appartements de la Reine",
+      "location": "INT. Appartements de la Reine",
+      "time": "Jour",
+      "shot": "Plan rapproché sur la soie qui se déploie",
+      "action": "La soie jaune se déploie, la cour se fige.",
+      "characters": [
+        "Marie-Antoinette",
+        "Rose Bertin"
+      ],
+      "dialogue": [
+        {
+          "speaker": "MARIE-ANTOINETTE",
+          "line": "Dieu... quelle est cette nuance?"
+        },
+        {
+          "speaker": "ROSE",
+          "line": "Je l'ai teintee ce matin, Majeste."
+        }
+      ],
+      "duration_seconds": 4.0,
+      "id": "scene_02",
+      "index": 2
+    },
+    {
+      "title": "Coiffeuse",
+      "location": "INT. Appartements - Coiffeuse",
+      "time": "Fin d'après-midi",
+      "shot": "Gros plan sur le masque de velours noir",
+      "action": "Le masque de velours noir cache la Reine.",
+      "characters": [
+        "Marie-Antoinette",
+        "Rose Bertin"
+      ],
+      "dialogue": [
+        {
+          "speaker": "MARIE-ANTOINETTE",
+          "line": "Parfois, j'aimerais disparaitre."
+        },
+        {
+          "speaker": "ROSE",
+          "line": "Et moi, j'aimerais etre moins libre."
+        }
+      ],
+      "duration_seconds": 4.0,
+      "id": "scene_03",
+      "index": 3
+    },
+    {
+      "title": "Appel du bal",
+      "location": "INT. Appartements - Porte",
+      "time": "Soir",
+      "shot": "Plan fixe, porte qui s'ouvre brutalement",
+      "action": "La Reine sort. Rose reste seule avec son de a coudre.",
+      "characters": [
+        "Huissier",
+        "Marie-Antoinette",
+        "Rose Bertin"
+      ],
+      "dialogue": [
+        {
+          "speaker": "HUISSIER (O.S.)",
+          "line": "Le Roi attend Votre Majeste."
+        }
+      ],
+      "duration_seconds": 4.0,
+      "id": "scene_04",
+      "index": 4
+    }
+  ],
+  "shots": [
+    {
+      "id": "scene_01",
+      "index": 1,
+      "duration_seconds": 4.0,
+      "duration_frames": 96,
+      "positive_prompt": "Scene: Cour de marbre, Location: EXT. Versailles - Cour de marbre, Time: Jour, Shot direction: Plan moyen, travelling lateral sur Rose, Action: Rose serre son coffret et contourne les portes., Characters: Rose Bertin, Garde suisse, Dialogue beat: ROSE: C'est pour la Reine. GARDE: Pas par ici, la marchande.",
+      "negative_prompt": "blurry, deformed face, extra limbs, low quality, text artifacts",
+      "seed": 1001
+    },
+    {
+      "id": "scene_02",
+      "index": 2,
+      "duration_seconds": 4.0,
+      "duration_frames": 96,
+      "positive_prompt": "Scene: Appartements de la Reine, Location: INT. Appartements de la Reine, Time: Jour, Shot direction: Plan rapproché sur la soie qui se déploie, Action: La soie jaune se déploie, la cour se fige., Characters: Marie-Antoinette, Rose Bertin, Dialogue beat: MARIE-ANTOINETTE: Dieu... quelle est cette nuance? ROSE: Je l'ai teintee ce matin, Majeste.",
+      "negative_prompt": "blurry, deformed face, extra limbs, low quality, text artifacts",
+      "seed": 1002
+    },
+    {
+      "id": "scene_03",
+      "index": 3,
+      "duration_seconds": 4.0,
+      "duration_frames": 96,
+      "positive_prompt": "Scene: Coiffeuse, Location: INT. Appartements - Coiffeuse, Time: Fin d'après-midi, Shot direction: Gros plan sur le masque de velours noir, Action: Le masque de velours noir cache la Reine., Characters: Marie-Antoinette, Rose Bertin, Dialogue beat: MARIE-ANTOINETTE: Parfois, j'aimerais disparaitre. ROSE: Et moi, j'aimerais etre moins libre.",
+      "negative_prompt": "blurry, deformed face, extra limbs, low quality, text artifacts",
+      "seed": 1003
+    },
+    {
+      "id": "scene_04",
+      "index": 4,
+      "duration_seconds": 4.0,
+      "duration_frames": 96,
+      "positive_prompt": "Scene: Appel du bal, Location: INT. Appartements - Porte, Time: Soir, Shot direction: Plan fixe, porte qui s'ouvre brutalement, Action: La Reine sort. Rose reste seule avec son de a coudre., Characters: Huissier, Marie-Antoinette, Rose Bertin, Dialogue beat: HUISSIER (O.S.): Le Roi attend Votre Majeste.",
+      "negative_prompt": "blurry, deformed face, extra limbs, low quality, text artifacts",
+      "seed": 1004
+    }
+  ]
+}
