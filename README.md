@@ -141,3 +141,14 @@ Feel free to open feature requests, bug reports etc under Issues.
 - https://js.langchain.com/docs/modules/models/llms/integrations#replicate
 - https://js.langchain.com/docs/modules/chains/index_related_chains/retrieval_qa
 
+## Local SSD knowledge base (large folders)
+
+This project now includes a local knowledge indexing flow for very large folders stored outside GitHub (for example on an external SSD).
+
+- Setup guide: `docs/local-knowledge-ssd-setup.md`
+- Indexing script: `npm run local-knowledge:index`
+- API routes:
+  - `POST /api/local-knowledge/index`
+  - `GET /api/local-knowledge/files`
+  - `GET /api/local-knowledge/preview`
+
