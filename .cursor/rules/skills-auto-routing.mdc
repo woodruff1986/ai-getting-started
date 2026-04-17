@@ -1,0 +1,106 @@
+---
+description: Auto-routage des skills Cursor selon l'intention des prompts (français + anglais)
+globs:
+alwaysApply: true
+---
+
+# Skills auto-routing (FR + EN) - Mode agressif
+
+Objectif: activer automatiquement les bons skills selon l'intention du prompt utilisateur, sans slash command.
+Mode agressif: privilégier l'activation plutôt que l'attente de signaux parfaits.
+
+## Règle générale
+
+À chaque nouvelle demande, détecter l'intention dominante et charger le skill correspondant.
+Si plusieurs intentions sont présentes (ou ambiguïté), charger l'orchestrateur `build-ai-product-pack` puis les skills spécialisés.
+
+En mode agressif:
+- Si le prompt concerne un travail de build/implémentation/optimisation non trivial, activer au minimum `build-ai-product-pack`.
+- En cas de doute entre 2 skills, charger les 2.
+- Éviter seulement les activations sur micro-questions purement factuelles (ex: "quelle heure est-il ?", "quelle version de Node ?").
+
+## Routage par intention
+
+### 1) Mémoire / contexte / tokens
+
+Déclencheurs typiques:
+- "mémoire", "memory", "rappel", "context recall", "historique", "contexte persistant"
+- "réduire tokens", "token cost", "grosse codebase", "naviguer le code rapidement"
+- "je répète toujours la même chose", "on perd le contexte", "session suivante", "handoff"
+- "window/context window", "prompt trop long", "ça coûte cher en tokens", "optimiser contexte"
+- "retrouver une décision", "où on avait décidé ça", "convention oubliée", "knowledge base"
+
+Action:
+- Charger `memory-stack`.
+
+### 2) UI / UX / design system / clonage visuel
+
+Déclencheurs typiques:
+- "UI", "UX", "design system", "DESIGN.md", "tokens design", "wireframe"
+- "cloner un site", "reproduire ce style", "landing page", "dashboard design"
+- "maquette", "look and feel", "charte graphique", "thème visuel", "palette"
+- "refonte", "redesign", "pixel perfect", "cohérence visuelle", "composants"
+- "hero", "CTA", "responsive", "mobile first", "accessibilité visuelle"
+
+Action:
+- Charger `design-system-stack`.
+
+### 3) Orchestration autonome / pipeline multi-agents
+
+Déclencheurs typiques:
+- "pipeline", "workflow autonome", "multi-agent", "plan build test review"
+- "dispatch", "checkpoints", "états de tâche", "PR automatique"
+- "automatiser", "autopilot", "industrialiser", "orchestrer", "coordonner"
+- "kanban", "backlog", "découper en tâches", "dépendances", "paralléliser"
+- "gouvernance de livraison", "quality gate", "rollout", "rollback", "runbook"
+
+Action:
+- Charger `autonomy-orchestration-stack`.
+
+### 4) Sécurité / conformité / qualité rédactionnelle
+
+Déclencheurs typiques:
+- "sécurité", "cyber", "hardening", "threat model", "incident", "compliance"
+- "améliore le texte", "moins robotique", "anti-slop", "prose claire"
+- "audit sécurité", "risque", "vuln", "vulnérabilité", "OWASP", "SOC2", "ISO 27001"
+- "secret", "clé API", "PII", "donnée sensible", "permissions", "RBAC", "auth"
+- "réécris", "rends plus naturel", "moins IA", "plus direct", "plus concis", "style humain"
+
+Action:
+- Charger `security-quality-stack`.
+
+### 5) Cas hybride (2 thèmes ou plus)
+
+Déclencheurs typiques:
+- Toute demande combinant mémoire + design, ou orchestration + sécurité, etc.
+
+Action:
+- Charger `build-ai-product-pack` puis les skills spécialisés pertinents.
+
+### 6) Fallback agressif par défaut
+
+Si la demande implique explicitement de **créer, modifier, implémenter, refactorer, corriger, optimiser, déployer**:
+- Charger `build-ai-product-pack` même si les signaux spécialisés sont faibles.
+- Ajouter ensuite les skills spécialisés détectés.
+
+## Priorités en cas de conflit
+
+1. Sécurité explicite > tout le reste.
+2. Si la demande est surtout UI, prioriser `design-system-stack`.
+3. Si la demande est surtout architecture/process, prioriser `autonomy-orchestration-stack`.
+4. Si la demande mentionne coûts token/contexte, prioriser `memory-stack`.
+5. Si le prompt demande explicitement une réécriture de texte, toujours ajouter `security-quality-stack`.
+
+## Politique de réponse
+
+- Répondre en français si le prompt est en français.
+- Ne pas demander de slash command pour activer les skills.
+- Mentionner brièvement les skills activés seulement si utile à la compréhension.
+
+## Exemples de routage (rapides)
+
+- "Refais mon onboarding SaaS et garde le style existant" -> `build-ai-product-pack` + `design-system-stack`
+- "On oublie tout d'une session à l'autre, optimise ça" -> `memory-stack` (et `build-ai-product-pack` si refonte process)
+- "Automatise de l'idée à la PR avec des agents" -> `build-ai-product-pack` + `autonomy-orchestration-stack`
+- "Réécris cette spec en plus naturelle et vérifie les risques" -> `security-quality-stack` (+ orchestrateur si projet large)
+
