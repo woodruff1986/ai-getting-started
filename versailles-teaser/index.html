@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #000;
+        color: #f7f1e1;
+        font-family: "Inter", Arial, sans-serif;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+      .backdrop {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 20% 10%, rgba(255, 232, 170, 0.2), transparent 45%),
+          radial-gradient(circle at 75% 80%, rgba(102, 15, 15, 0.4), transparent 45%),
+          linear-gradient(130deg, #10111b, #1a1214 45%, #09090b);
+      }
+      .fog {
+        position: absolute;
+        inset: -8%;
+        background:
+          radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.08), transparent 40%),
+          radial-gradient(circle at 85% 40%, rgba(255, 212, 130, 0.08), transparent 42%);
+        filter: blur(8px);
+        opacity: 0.6;
+      }
+      .grain {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+        background-size: 3px 3px;
+        opacity: 0.35;
+        mix-blend-mode: soft-light;
+      }
+      .vignette {
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 280px rgba(0, 0, 0, 0.9);
+      }
+      .title-block {
+        position: absolute;
+        left: 140px;
+        right: 140px;
+        top: 120px;
+        text-align: center;
+      }
+      .title-kicker {
+        font-family: "Cinzel", Georgia, serif;
+        letter-spacing: 0.48em;
+        font-size: 30px;
+        color: #cfb37a;
+        text-transform: uppercase;
+      }
+      .title-main {
+        margin-top: 16px;
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 128px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+      }
+      .title-sub {
+        margin-top: 18px;
+        font-size: 40px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #f5dcc6;
+      }
+      .scene-strip {
+        position: absolute;
+        left: 120px;
+        right: 120px;
+        bottom: 90px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+      .scene-card {
+        border: 1px solid rgba(223, 195, 140, 0.45);
+        background: rgba(6, 7, 12, 0.5);
+        border-radius: 16px;
+        padding: 24px;
+        min-height: 196px;
+        backdrop-filter: blur(2px);
+      }
+      .scene-index {
+        font-family: "Cinzel", Georgia, serif;
+        color: #caa96b;
+        font-size: 24px;
+        letter-spacing: 0.2em;
+      }
+      .scene-title {
+        margin-top: 8px;
+        font-size: 24px;
+        font-weight: 700;
+        color: #f4e8d0;
+      }
+      .scene-copy {
+        margin-top: 10px;
+        font-size: 20px;
+        line-height: 1.35;
+        color: #f5f2ec;
+      }
+      .dialogue-box {
+        position: absolute;
+        left: 180px;
+        right: 180px;
+        top: 370px;
+        border-left: 4px solid #d8b067;
+        background: linear-gradient(90deg, rgba(6, 7, 12, 0.7), rgba(6, 7, 12, 0.18));
+        padding: 28px 34px;
+        border-radius: 12px;
+      }
+      .speaker {
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 24px;
+        color: #cfb37a;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+      .line {
+        margin-top: 10px;
+        font-size: 41px;
+        line-height: 1.25;
+        color: #fff2d5;
+      }
+      .meta-line {
+        margin-top: 12px;
+        font-size: 24px;
+        color: #f4d9bd;
+        opacity: 0.9;
+      }
+      .ending {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .ending p {
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 90px;
+        line-height: 1.2;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        text-shadow: 0 0 28px rgba(0, 0, 0, 0.85);
+      }
+      .accent {
+        color: #ddb16b;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="36"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="backdrop" class="backdrop clip" data-start="0" data-duration="36" data-track-index="0"></div>
+      <div id="fog" class="fog clip" data-start="0" data-duration="36" data-track-index="1"></div>
+      <div id="grain" class="grain clip" data-start="0" data-duration="36" data-track-index="2"></div>
+      <div id="vignette" class="vignette clip" data-start="0" data-duration="36" data-track-index="3"></div>
+
+      <section id="title" class="title-block clip" data-start="0" data-duration="9" data-track-index="4">
+        <div class="title-kicker">Extrait I</div>
+        <h1 class="title-main">Versailles</h1>
+        <h2 class="title-sub">La couture comme arme politique</h2>
+      </section>
+
+      <section id="strip" class="scene-strip clip" data-start="5" data-duration="11" data-track-index="5">
+        <article id="card1" class="scene-card">
+          <div class="scene-index">01</div>
+          <h3 class="scene-title">Cour de marbre</h3>
+          <p class="scene-copy">Rose Bertin franchit les portes de Versailles avec un coffret scellé pour la Reine.</p>
+        </article>
+        <article id="card2" class="scene-card">
+          <div class="scene-index">02</div>
+          <h3 class="scene-title">Appartements privés</h3>
+          <p class="scene-copy">Marie-Antoinette découvre une soie jaune, vibrante, presque électrique.</p>
+        </article>
+        <article id="card3" class="scene-card">
+          <div class="scene-index">03</div>
+          <h3 class="scene-title">Le masque noir</h3>
+          <p class="scene-copy">L'échange glisse vers la vérité: la cour est une cage dorée.</p>
+        </article>
+        <article id="card4" class="scene-card">
+          <div class="scene-index">04</div>
+          <h3 class="scene-title">Galerie des glaces</h3>
+          <p class="scene-copy">La Reine rayonne. Rose reste dans l'ombre, le de a coudre en poche.</p>
+        </article>
+      </section>
+
+      <section id="quote1" class="dialogue-box clip" data-start="15" data-duration="6" data-track-index="6">
+        <div class="speaker">Rose</div>
+        <p class="line">"C'est pour la Reine."</p>
+        <p class="meta-line">Sous les ors de Versailles, chaque pas est un risque.</p>
+      </section>
+
+      <section id="quote2" class="dialogue-box clip" data-start="20.5" data-duration="6" data-track-index="7">
+        <div class="speaker">Marie-Antoinette</div>
+        <p class="line">"Dieu... quelle est cette nuance?"</p>
+        <p class="meta-line">Une couleur peut seduire une cour entiere.</p>
+      </section>
+
+      <section id="quote3" class="dialogue-box clip" data-start="26" data-duration="6.5" data-track-index="8">
+        <div class="speaker">Rose</div>
+        <p class="line">"La perfection est notre seule armure."</p>
+        <p class="meta-line">L'elegance devient frontiere entre pouvoir et survie.</p>
+      </section>
+
+      <section id="ending" class="ending clip" data-start="31.5" data-duration="4.5" data-track-index="9">
+        <p>
+          <span class="accent">Versailles</span><br />
+          chapitre I
+        </p>
+      </section>
+      <audio
+        id="tone"
+        data-start="0"
+        data-duration="36"
+        data-track-index="10"
+        data-volume="0"
+        src="https://cdn.jsdelivr.net/gh/anars/blank-audio/1-second-of-silence.mp3"
+      ></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      tl.from("#title", { opacity: 0, y: 32, duration: 1.2, ease: "power2.out" }, 0.1);
+      tl.from(".title-main", { letterSpacing: "0.2em", scale: 0.96, duration: 2.2, ease: "power3.out" }, 0.4);
+      tl.to("#title", { opacity: 0, y: -24, duration: 1, ease: "power2.in" }, 8);
+
+      tl.from("#strip", { opacity: 0, y: 28, duration: 0.9, ease: "power2.out" }, 5.2);
+      tl.from(
+        ["#card1", "#card2", "#card3", "#card4"],
+        { opacity: 0, y: 36, duration: 0.85, ease: "power2.out", stagger: 0.24 },
+        5.5
+      );
+      tl.to("#strip", { opacity: 0, y: -18, duration: 1, ease: "power2.in" }, 15);
+
+      tl.from("#quote1", { opacity: 0, y: 24, duration: 0.6, ease: "power2.out" }, 15.1);
+      tl.to("#quote1", { opacity: 0, y: -20, duration: 0.7, ease: "power2.in" }, 20.2);
+
+      tl.from("#quote2", { opacity: 0, y: 24, duration: 0.6, ease: "power2.out" }, 20.6);
+      tl.to("#quote2", { opacity: 0, y: -20, duration: 0.7, ease: "power2.in" }, 25.6);
+
+      tl.from("#quote3", { opacity: 0, y: 24, duration: 0.7, ease: "power2.out" }, 26.1);
+      tl.to("#quote3", { opacity: 0, y: -20, duration: 0.8, ease: "power2.in" }, 31.3);
+
+      tl.from("#ending", { opacity: 0, scale: 0.96, duration: 1, ease: "power2.out" }, 31.7);
+      tl.to("#ending", { opacity: 0, duration: 0.9, ease: "power2.in" }, 35.1);
+
+      tl.to("#fog", { x: -80, y: 18, duration: 36, ease: "none" }, 0);
+      tl.to("#grain", { opacity: 0.45, duration: 36, ease: "sine.inOut" }, 0);
+      tl.to("#backdrop", { filter: "hue-rotate(10deg)", duration: 36, ease: "none" }, 0);
+
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
