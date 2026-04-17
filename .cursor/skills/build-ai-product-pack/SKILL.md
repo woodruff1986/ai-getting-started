@@ -1,6 +1,6 @@
 ---
 name: build-ai-product-pack
-description: Use when building or improving an AI-assisted product workflow that needs memory, design generation, orchestration, security guardrails, and writing quality controls in Cursor.
+description: Use when prompts mention workflow produit IA, mémoire persistante, design system/UI generation, orchestration multi-agent, sécurité, qualité rédactionnelle, ou pipeline plan-build-test-review-PR in Cursor.
 ---
 
 # Build AI Product Pack

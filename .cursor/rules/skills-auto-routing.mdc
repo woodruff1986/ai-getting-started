@@ -1,0 +1,74 @@
+---
+description: Auto-routage des skills Cursor selon l'intention des prompts (français + anglais)
+globs:
+alwaysApply: true
+---
+
+# Skills auto-routing (FR + EN)
+
+Objectif: activer automatiquement les bons skills selon l'intention du prompt utilisateur, sans slash command.
+
+## Règle générale
+
+À chaque nouvelle demande, détecter l'intention dominante et charger le skill correspondant.
+Si plusieurs intentions sont présentes, charger l'orchestrateur `build-ai-product-pack` puis les skills spécialisés.
+
+## Routage par intention
+
+### 1) Mémoire / contexte / tokens
+
+Déclencheurs typiques:
+- "mémoire", "memory", "rappel", "context recall", "historique", "contexte persistant"
+- "réduire tokens", "token cost", "grosse codebase", "naviguer le code rapidement"
+
+Action:
+- Charger `memory-stack`.
+
+### 2) UI / UX / design system / clonage visuel
+
+Déclencheurs typiques:
+- "UI", "UX", "design system", "DESIGN.md", "tokens design", "wireframe"
+- "cloner un site", "reproduire ce style", "landing page", "dashboard design"
+
+Action:
+- Charger `design-system-stack`.
+
+### 3) Orchestration autonome / pipeline multi-agents
+
+Déclencheurs typiques:
+- "pipeline", "workflow autonome", "multi-agent", "plan build test review"
+- "dispatch", "checkpoints", "états de tâche", "PR automatique"
+
+Action:
+- Charger `autonomy-orchestration-stack`.
+
+### 4) Sécurité / conformité / qualité rédactionnelle
+
+Déclencheurs typiques:
+- "sécurité", "cyber", "hardening", "threat model", "incident", "compliance"
+- "améliore le texte", "moins robotique", "anti-slop", "prose claire"
+
+Action:
+- Charger `security-quality-stack`.
+
+### 5) Cas hybride (2 thèmes ou plus)
+
+Déclencheurs typiques:
+- Toute demande combinant mémoire + design, ou orchestration + sécurité, etc.
+
+Action:
+- Charger `build-ai-product-pack` puis les skills spécialisés pertinents.
+
+## Priorités en cas de conflit
+
+1. Sécurité explicite > tout le reste.
+2. Si la demande est surtout UI, prioriser `design-system-stack`.
+3. Si la demande est surtout architecture/process, prioriser `autonomy-orchestration-stack`.
+4. Si la demande mentionne coûts token/contexte, prioriser `memory-stack`.
+
+## Politique de réponse
+
+- Répondre en français si le prompt est en français.
+- Ne pas demander de slash command pour activer les skills.
+- Mentionner brièvement les skills activés seulement si utile à la compréhension.
+

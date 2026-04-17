@@ -1,6 +1,6 @@
 ---
 name: autonomy-orchestration-stack
-description: Use when setting up or improving an autonomous multi-agent delivery pipeline with planning, dispatch, checkpoints, testing, review, and pull request automation.
+description: Use when prompts mention workflow autonome, multi-agent, orchestration, plan-build-test-review-PR, convoy, dispatch, backlog automation, ou pipeline de livraison continue avec checkpoints et reprise.
 ---
 
 # Autonomy Orchestration Stack

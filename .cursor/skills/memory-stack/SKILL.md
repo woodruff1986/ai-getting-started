@@ -1,6 +1,6 @@
 ---
 name: memory-stack
-description: Use when a Cursor workflow needs persistent memory, compact context recall, and low-token codebase navigation across sessions.
+description: Use when prompts mention mémoire persistante, memory, rappel de contexte, context recall, long conversations, token reduction, codebase navigation, session handoff, agentmemory, or token-savior.
 ---
 
 # Memory Stack

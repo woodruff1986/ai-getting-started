@@ -1,6 +1,6 @@
 ---
 name: design-system-stack
-description: Use when translating product intent into a consistent UI system with design tokens, reproducible visual rules, and agent-friendly implementation guidance.
+description: Use when prompts mention UI, UX, design system, DESIGN.md, landing page, dashboard, style guide, composant, maquette, wireframe, clonage de site, tokens visuels, charte graphique, or front-end consistency in Cursor.
 ---
 
 # Design System Stack

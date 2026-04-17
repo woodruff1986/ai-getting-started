@@ -1,6 +1,6 @@
 ---
 name: security-quality-stack
-description: Use when a task needs practical cybersecurity guardrails and strong anti-slop writing quality in AI-generated outputs.
+description: Use when prompts involve cybersecurity, sécurité, hardening, threat modeling, compliance, IAM/secrets/data protection, or when text must be rewritten to be clearer, more direct, human, and less AI-slop.
 ---
 
 # Security + Quality Stack
