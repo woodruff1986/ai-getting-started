@@ -53,6 +53,34 @@
         inset: 0;
         box-shadow: inset 0 0 260px rgba(0, 0, 0, 0.92);
       }
+      .episode-card {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .episode-tag {
+        font-family: "Cinzel", Georgia, serif;
+        text-transform: uppercase;
+        font-size: 33px;
+        letter-spacing: 0.42em;
+        color: #d8b06f;
+      }
+      .episode-main {
+        margin-top: 22px;
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 124px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .episode-sub {
+        margin-top: 16px;
+        font-size: 37px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #f2d8b2;
+      }
       .scene {
         position: absolute;
         inset: 0;
@@ -141,6 +169,27 @@
       .gold {
         color: #ddb16b;
       }
+      .cliffhanger {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .cliffhanger p {
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 110px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        line-height: 1.15;
+      }
+      .cliffhanger span {
+        display: block;
+        margin-top: 20px;
+        font-size: 35px;
+        letter-spacing: 0.15em;
+        color: #f2d4a4;
+      }
     </style>
   </head>
   <body>
@@ -148,15 +197,23 @@
       id="root"
       data-composition-id="main"
       data-start="0"
-      data-duration="44"
+      data-duration="42"
       data-width="1920"
       data-height="1080"
     >
-      <div id="base" class="base-light clip" data-start="0" data-duration="44" data-track-index="0"></div>
-      <div id="grain" class="grain clip" data-start="0" data-duration="44" data-track-index="1"></div>
-      <div class="vignette clip" data-start="0" data-duration="44" data-track-index="2"></div>
+      <div id="base" class="base-light clip" data-start="0" data-duration="42" data-track-index="0"></div>
+      <div id="grain" class="grain clip" data-start="0" data-duration="42" data-track-index="1"></div>
+      <div class="vignette clip" data-start="0" data-duration="42" data-track-index="2"></div>
 
-      <section id="scene1" class="scene clip" data-start="0" data-duration="5.5" data-track-index="3">
+      <section id="episodeCard" class="episode-card clip" data-start="0" data-duration="3.8" data-track-index="3">
+        <div>
+          <div class="episode-tag">Serie Originale</div>
+          <h1 class="episode-main">Versailles</h1>
+          <h2 class="episode-sub">Episode 1 · Le Fil et la Couronne</h2>
+        </div>
+      </section>
+
+      <section id="scene1" class="scene clip" data-start="3.5" data-duration="4.4" data-track-index="4">
         <div class="location">EXT. Versailles - Cour de Marbre</div>
         <div class="time-tag">Jour</div>
         <h1 class="scene-title">Le seuil du palais</h1>
@@ -165,10 +222,10 @@
           <div class="speaker">Rose</div>
           <p class="line">"C'est pour la Reine."</p>
         </div>
-        <div class="scene-id">SCENE 01</div>
+        <div class="scene-id">PLAN 01</div>
       </section>
 
-      <section id="scene2" class="scene clip" data-start="5.2" data-duration="5.8" data-track-index="4">
+      <section id="scene2" class="scene clip" data-start="7.6" data-duration="4.6" data-track-index="5">
         <div class="location">EXT. Portes dorees</div>
         <div class="time-tag">Continu</div>
         <h1 class="scene-title">Le refus</h1>
@@ -177,10 +234,10 @@
           <div class="speaker">Garde</div>
           <p class="line">"Pas par ici, la marchande. Les livraisons, c'est la-bas."</p>
         </div>
-        <div class="scene-id">SCENE 02</div>
+        <div class="scene-id">PLAN 02</div>
       </section>
 
-      <section id="scene3" class="scene clip" data-start="10.7" data-duration="5.6" data-track-index="5">
+      <section id="scene3" class="scene clip" data-start="11.6" data-duration="4.8" data-track-index="6">
         <div class="location">INT. Appartements de la Reine</div>
         <div class="time-tag">Jour</div>
         <h1 class="scene-title">Le coffret s'ouvre</h1>
@@ -189,10 +246,10 @@
           <div class="speaker">Marie-Antoinette</div>
           <p class="line">"Dieu... quelle est cette nuance?"</p>
         </div>
-        <div class="scene-id">SCENE 03</div>
+        <div class="scene-id">PLAN 03</div>
       </section>
 
-      <section id="scene4" class="scene clip" data-start="16.2" data-duration="5.8" data-track-index="6">
+      <section id="scene4" class="scene clip" data-start="15.9" data-duration="4.9" data-track-index="7">
         <div class="location">INT. Appartements - Grand Miroir</div>
         <div class="time-tag">Quelques instants plus tard</div>
         <h1 class="scene-title">L'ajustement</h1>
@@ -201,10 +258,10 @@
           <div class="speaker">Rose</div>
           <p class="line">"La perfection est notre seule armure."</p>
         </div>
-        <div class="scene-id">SCENE 04</div>
+        <div class="scene-id">PLAN 04</div>
       </section>
 
-      <section id="scene5" class="scene clip" data-start="21.9" data-duration="5.7" data-track-index="7">
+      <section id="scene5" class="scene clip" data-start="20.2" data-duration="5.2" data-track-index="8">
         <div class="location">INT. Appartements - Coiffeuse</div>
         <div class="time-tag">Murmures</div>
         <h1 class="scene-title">Le masque noir</h1>
@@ -213,10 +270,10 @@
           <div class="speaker">Marie-Antoinette</div>
           <p class="line">"Parfois, j'aimerais disparaitre. Etre libre, tout simplement."</p>
         </div>
-        <div class="scene-id">SCENE 05</div>
+        <div class="scene-id">PLAN 05</div>
       </section>
 
-      <section id="scene6" class="scene clip" data-start="27.4" data-duration="5.6" data-track-index="8">
+      <section id="scene6" class="scene clip" data-start="24.9" data-duration="5.1" data-track-index="9">
         <div class="location">INT. Appartements - Face a face</div>
         <div class="time-tag">Silence suspendu</div>
         <h1 class="scene-title">La confession de Rose</h1>
@@ -225,10 +282,10 @@
           <div class="speaker">Rose</div>
           <p class="line">"Je couds des fils d'or, mais on me rappelle sans cesse que je ne suis que du laiton."</p>
         </div>
-        <div class="scene-id">SCENE 06</div>
+        <div class="scene-id">PLAN 06</div>
       </section>
 
-      <section id="scene7" class="scene clip" data-start="32.8" data-duration="5.5" data-track-index="9">
+      <section id="scene7" class="scene clip" data-start="29.4" data-duration="4.9" data-track-index="10">
         <div class="location">INT. Appartements - Porte principale</div>
         <div class="time-tag">Coup d'arret</div>
         <h1 class="scene-title">L'appel du bal</h1>
@@ -237,37 +294,44 @@
           <div class="speaker">Huissier (O.S.)</div>
           <p class="line">"Le Roi attend Votre Majeste pour le bal."</p>
         </div>
-        <div class="scene-id">SCENE 07</div>
+        <div class="scene-id">PLAN 07</div>
       </section>
 
-      <section id="scene8" class="scene clip" data-start="37.9" data-duration="4.4" data-track-index="10">
+      <section id="scene8" class="scene clip" data-start="33.7" data-duration="4.6" data-track-index="11">
         <div class="location">EXT. Galerie des glaces</div>
         <div class="time-tag">Plus tard</div>
         <h1 class="scene-title">Le dernier regard</h1>
         <p class="action">Au loin, la Reine rayonne. Rose, dans l'ombre, touche son de a coudre en etain et s'efface.</p>
-        <div class="scene-id">SCENE 08</div>
+        <div class="scene-id">PLAN 08</div>
       </section>
 
-      <section id="final" class="final-card clip" data-start="41.9" data-duration="2.1" data-track-index="11">
+      <section id="final" class="final-card clip" data-start="37.8" data-duration="2.4" data-track-index="12">
         <p>
           <span class="gold">Versailles</span><br />
           Episode I : Le fil et la couronne
         </p>
       </section>
 
-      <div id="flash1" class="flash-cut clip" data-start="5.1" data-duration="0.3" data-track-index="12"></div>
-      <div id="flash2" class="flash-cut clip" data-start="10.6" data-duration="0.3" data-track-index="13"></div>
-      <div id="flash3" class="flash-cut clip" data-start="16.1" data-duration="0.3" data-track-index="14"></div>
-      <div id="flash4" class="flash-cut clip" data-start="21.8" data-duration="0.3" data-track-index="15"></div>
-      <div id="flash5" class="flash-cut clip" data-start="27.3" data-duration="0.3" data-track-index="16"></div>
-      <div id="flash6" class="flash-cut clip" data-start="32.7" data-duration="0.3" data-track-index="17"></div>
-      <div id="flash7" class="flash-cut clip" data-start="37.8" data-duration="0.3" data-track-index="18"></div>
+      <section id="cliff" class="cliffhanger clip" data-start="40" data-duration="2" data-track-index="13">
+        <p>
+          A suivre
+          <span>Le bal ne fait que commencer.</span>
+        </p>
+      </section>
+
+      <div id="flash1" class="flash-cut clip" data-start="7.5" data-duration="0.2" data-track-index="14"></div>
+      <div id="flash2" class="flash-cut clip" data-start="11.5" data-duration="0.2" data-track-index="15"></div>
+      <div id="flash3" class="flash-cut clip" data-start="15.8" data-duration="0.2" data-track-index="16"></div>
+      <div id="flash4" class="flash-cut clip" data-start="20.1" data-duration="0.2" data-track-index="17"></div>
+      <div id="flash5" class="flash-cut clip" data-start="24.8" data-duration="0.2" data-track-index="18"></div>
+      <div id="flash6" class="flash-cut clip" data-start="29.3" data-duration="0.2" data-track-index="19"></div>
+      <div id="flash7" class="flash-cut clip" data-start="33.6" data-duration="0.2" data-track-index="20"></div>
 
       <audio
         id="silence"
         data-start="0"
-        data-duration="44"
-        data-track-index="19"
+        data-duration="42"
+        data-track-index="21"
         data-volume="0"
         src="https://cdn.jsdelivr.net/gh/anars/blank-audio/1-second-of-silence.mp3"
       ></audio>
@@ -278,10 +342,20 @@
       const tl = gsap.timeline({ paused: true });
 
       const scenes = ["#scene1", "#scene2", "#scene3", "#scene4", "#scene5", "#scene6", "#scene7", "#scene8"];
-      const starts = [0, 5.2, 10.7, 16.2, 21.9, 27.4, 32.8, 37.9];
-      const outs = [4.9, 10.4, 15.9, 21.6, 27.1, 32.5, 37.6, 41.6];
+      const starts = [3.5, 7.6, 11.6, 15.9, 20.2, 24.9, 29.4, 33.7];
+      const outs = [7.2, 11.2, 15.5, 19.8, 24.5, 29.1, 33.4, 37.6];
+      tl.set(scenes, { visibility: "hidden", opacity: 0 }, 0);
+
+      tl.from("#episodeCard", { opacity: 0, scale: 1.05, duration: 1, ease: "power2.out" }, 0.1);
+      tl.from(
+        "#episodeCard .episode-tag, #episodeCard .episode-main, #episodeCard .episode-sub",
+        { opacity: 0, y: 20, duration: 0.75, ease: "power2.out", stagger: 0.12 },
+        0.4
+      );
+      tl.to("#episodeCard", { opacity: 0, duration: 0.6, ease: "power2.in" }, 3.2);
 
       scenes.forEach((scene, index) => {
+        tl.set(scene, { visibility: "visible" }, starts[index]);
         tl.from(scene, { opacity: 0, scale: 1.03, duration: 0.65, ease: "power2.out" }, starts[index] + 0.05);
         tl.from(
           `${scene} .location, ${scene} .time-tag, ${scene} .scene-title, ${scene} .action, ${scene} .dialogue, ${scene} .scene-id`,
@@ -289,17 +363,20 @@
           starts[index] + 0.2
         );
         tl.to(scene, { opacity: 0, y: -16, duration: 0.55, ease: "power2.in" }, outs[index]);
+        tl.set(scene, { visibility: "hidden" }, outs[index] + 0.56);
       });
 
       ["#flash1", "#flash2", "#flash3", "#flash4", "#flash5", "#flash6", "#flash7"].forEach((flash) => {
         tl.fromTo(flash, { opacity: 0 }, { opacity: 0.88, duration: 0.08, yoyo: true, repeat: 1, ease: "sine.inOut" });
       });
 
-      tl.from("#final", { opacity: 0, scale: 0.95, duration: 0.7, ease: "power2.out" }, 42);
-      tl.to("#final", { opacity: 0, duration: 0.35, ease: "power2.in" }, 43.6);
+      tl.from("#final", { opacity: 0, scale: 0.95, duration: 0.6, ease: "power2.out" }, 38);
+      tl.to("#final", { opacity: 0, duration: 0.35, ease: "power2.in" }, 39.8);
+      tl.from("#cliff", { opacity: 0, scale: 1.08, duration: 0.5, ease: "power3.out" }, 40);
+      tl.to("#cliff", { opacity: 0, duration: 0.35, ease: "power2.in" }, 41.7);
 
-      tl.to("#base", { filter: "hue-rotate(17deg)", duration: 44, ease: "none" }, 0);
-      tl.to("#grain", { opacity: 0.43, duration: 44, ease: "none" }, 0);
+      tl.to("#base", { filter: "hue-rotate(22deg)", duration: 42, ease: "none" }, 0);
+      tl.to("#grain", { opacity: 0.46, duration: 42, ease: "none" }, 0);
 
       window.__timelines.main = tl;
     </script>
