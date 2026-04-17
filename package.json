@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "generate-embeddings-pinecone": "node src/scripts/indexBlogs.mjs",
-    "generate-embeddings-supabase": "node src/scripts/indexBlogPGVector.mjs"
+    "generate-embeddings-supabase": "node src/scripts/indexBlogPGVector.mjs",
+    "local-knowledge:index": "node src/scripts/indexLocalKnowledge.mjs"
   },
   "dependencies": {
     "@arcjet/next": "^1.0.0-alpha.13",
@@ -17,12 +18,14 @@
     "@pinecone-database/pinecone": "^2.2.2",
     "@supabase/supabase-js": "^2.25.0",
     "@tailwindcss/forms": "^0.5.7",
+    "@types/pg": "^8.20.0",
     "ai": "^2.1.3",
     "autoprefixer": "10.4.19",
     "dotenv": "^16.4.5",
     "hnswlib-node": "^1.4.2",
     "langchain": "^0.0.100",
     "next": "14.2.3",
+    "pg": "^8.20.0",
     "postcss": "8.4.38",
     "react": "18.3.1",
     "react-dom": "18.3.1",
