@@ -36,3 +36,15 @@ next-env.d.ts
 
 /.env.prod
 /fly.toml
+/.firecrawl/
+video-pipeline/outputs/shots/
+video-pipeline/outputs/final/
+video-pipeline/configs/pipeline.yaml
+video-pipeline/workflows/comfyui-cogvideox.json
+
+# local video pipeline artifacts
+/video-pipeline/outputs/shots/*
+/video-pipeline/outputs/final/*
+!/video-pipeline/outputs/shots/.gitkeep
+!/video-pipeline/outputs/final/.gitkeep
+!/video-pipeline/outputs/shots/.gitkeep

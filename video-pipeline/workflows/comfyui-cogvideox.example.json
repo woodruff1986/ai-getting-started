@@ -1,0 +1,18 @@
+{
+  "note": "Example placeholder for a ComfyUI API workflow. Replace with your exported CogVideoX workflow JSON.",
+  "required_placeholders": {
+    "__PROMPT__": "Shot prompt text",
+    "__NEGATIVE_PROMPT__": "Optional negative prompt text",
+    "__SEED__": "Integer seed for deterministic generation",
+    "__DURATION_FRAMES__": "Target frame count (duration_seconds * fps)",
+    "__WIDTH__": "Frame width",
+    "__HEIGHT__": "Frame height",
+    "__OUTPUT_PREFIX__": "Unique output prefix per shot"
+  },
+  "how_to_use": [
+    "In ComfyUI, build your CogVideoX generation graph.",
+    "Export API workflow JSON from ComfyUI.",
+    "Replace node input values with placeholders listed above.",
+    "Save the JSON at this path or update workflow_json in pipeline.yaml."
+  ]
+}

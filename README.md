@@ -24,6 +24,7 @@
 ## Overview
 - 🚀 [Quickstart](#quickstart)
 - 💻 [Contribute to this repo](#how-to-contribute-to-this-repo)
+- 🎬 [Local open-source video pipeline](video-pipeline/README.md)
 
 ## Quickstart 
 The simplest way to try out this stack is to test it out locally and traverse through code files to understand how each component work. Here are the steps to get started. 

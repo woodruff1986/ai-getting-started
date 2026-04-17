@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #050505;
+        color: #f8f1de;
+        font-family: "Inter", Arial, sans-serif;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+      .base-light {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(circle at 15% 25%, rgba(214, 173, 109, 0.26), transparent 32%),
+          radial-gradient(circle at 80% 70%, rgba(120, 28, 38, 0.28), transparent 38%),
+          linear-gradient(130deg, #0d1119 0%, #1b1014 52%, #07080a 100%);
+      }
+      .grain {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+        background-size: 3px 3px;
+        opacity: 0.3;
+        mix-blend-mode: soft-light;
+      }
+      .vignette {
+        position: absolute;
+        inset: 0;
+        box-shadow: inset 0 0 260px rgba(0, 0, 0, 0.92);
+      }
+      .episode-card {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .episode-tag {
+        font-family: "Cinzel", Georgia, serif;
+        text-transform: uppercase;
+        font-size: 33px;
+        letter-spacing: 0.42em;
+        color: #d8b06f;
+      }
+      .episode-main {
+        margin-top: 22px;
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 124px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .episode-sub {
+        margin-top: 16px;
+        font-size: 37px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #f2d8b2;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        padding: 95px 120px 95px 120px;
+      }
+      .location {
+        font-family: "Cinzel", Georgia, serif;
+        text-transform: uppercase;
+        font-size: 29px;
+        letter-spacing: 0.19em;
+        color: #d7b47a;
+      }
+      .time-tag {
+        margin-top: 12px;
+        font-size: 22px;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #f6dcb4;
+      }
+      .scene-title {
+        margin-top: 30px;
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 96px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        text-shadow: 0 8px 40px rgba(0, 0, 0, 0.85);
+      }
+      .action {
+        margin-top: 24px;
+        max-width: 1340px;
+        font-size: 40px;
+        line-height: 1.24;
+        color: #fff5df;
+      }
+      .dialogue {
+        margin-top: 36px;
+        max-width: 1400px;
+        border-left: 4px solid #d6aa60;
+        padding: 22px 28px;
+        background: linear-gradient(90deg, rgba(8, 9, 12, 0.74), rgba(8, 9, 12, 0.2));
+      }
+      .speaker {
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 24px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #dbb77b;
+      }
+      .line {
+        margin-top: 8px;
+        font-size: 44px;
+        line-height: 1.2;
+        color: #fff1d2;
+      }
+      .scene-id {
+        position: absolute;
+        right: 120px;
+        bottom: 85px;
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 34px;
+        letter-spacing: 0.22em;
+        color: rgba(236, 205, 150, 0.9);
+      }
+      .flash-cut {
+        position: absolute;
+        inset: 0;
+        background: #f4ddbb;
+        mix-blend-mode: screen;
+        opacity: 0;
+      }
+      .final-card {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .final-card p {
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 92px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        line-height: 1.26;
+        text-shadow: 0 10px 34px rgba(0, 0, 0, 0.88);
+      }
+      .gold {
+        color: #ddb16b;
+      }
+      .cliffhanger {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        text-align: center;
+      }
+      .cliffhanger p {
+        font-family: "Cinzel", Georgia, serif;
+        font-size: 110px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        line-height: 1.15;
+      }
+      .cliffhanger span {
+        display: block;
+        margin-top: 20px;
+        font-size: 35px;
+        letter-spacing: 0.15em;
+        color: #f2d4a4;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="55"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="base" class="base-light clip" data-start="0" data-duration="55" data-track-index="0"></div>
+      <div id="grain" class="grain clip" data-start="0" data-duration="55" data-track-index="1"></div>
+      <div class="vignette clip" data-start="0" data-duration="55" data-track-index="2"></div>
+
+      <section id="episodeCard" class="episode-card clip" data-start="0" data-duration="4.2" data-track-index="3">
+        <div>
+          <div class="episode-tag">Serie Originale</div>
+          <h1 class="episode-main">Versailles</h1>
+          <h2 class="episode-sub">Episode 1 · Le Fil et la Couronne</h2>
+        </div>
+      </section>
+
+      <section id="scene1" class="scene clip" data-start="3.9" data-duration="4.5" data-track-index="4">
+        <div class="location">EXT. Versailles - Cour de Marbre</div>
+        <div class="time-tag">Jour</div>
+        <h1 class="scene-title">Le ciel de plomb</h1>
+        <p class="action">La magnificence du palais ecrase le monde. Rose Bertin serre son coffret de cedre contre son coeur et avance sans reverence.</p>
+        <div class="dialogue">
+          <div class="speaker">Rose</div>
+          <p class="line">"C'est pour la Reine."</p>
+        </div>
+        <div class="scene-id">PLAN 01</div>
+      </section>
+
+      <section id="scene2" class="scene clip" data-start="8" data-duration="4.3" data-track-index="5">
+        <div class="location">EXT. Portes dorees</div>
+        <div class="time-tag">Continu</div>
+        <h1 class="scene-title">La hallebarde</h1>
+        <p class="action">Deux gardes suisses lui barrent la route. Le metal claque. Son coffret sans armoiries la condamne d'avance.</p>
+        <div class="dialogue">
+          <div class="speaker">Garde 1</div>
+          <p class="line">"Pas par ici, la marchande. Les livraisons, c'est la-bas."</p>
+        </div>
+        <div class="scene-id">PLAN 02</div>
+      </section>
+
+      <section id="scene3" class="scene clip" data-start="11.9" data-duration="4.2" data-track-index="6">
+        <div class="location">EXT. Cour d'Honneur</div>
+        <div class="time-tag">Quelques secondes plus tard</div>
+        <h1 class="scene-title">Le carrosse</h1>
+        <p class="action">Rires et musique filtrent. Un carrosse opulent coupe la cour. Une comtesse poudree fusille Rose d'un regard dedaigneux.</p>
+        <div class="dialogue">
+          <div class="speaker">Action</div>
+          <p class="line">Rose crispe les doigts, se retourne et prend la petite porte laterale.</p>
+        </div>
+        <div class="scene-id">PLAN 03</div>
+      </section>
+
+      <section id="scene4" class="scene clip" data-start="15.7" data-duration="4" data-track-index="7">
+        <div class="location">INT. Appartements de la Reine</div>
+        <div class="time-tag">Jour</div>
+        <h1 class="scene-title">Le tumulte</h1>
+        <p class="action">Les dames d'honneur s'agitent autour de Marie-Antoinette. La Reine rejette chaque robe avec une nervosite feconde.</p>
+        <div class="dialogue">
+          <div class="speaker">Marie-Antoinette</div>
+          <p class="line">"Non! Pas celle-ci. On dira que la Reine s'habille dans ses restes!"</p>
+        </div>
+        <div class="scene-id">PLAN 04</div>
+      </section>
+
+      <section id="scene5" class="scene clip" data-start="19.3" data-duration="4.8" data-track-index="8">
+        <div class="location">INT. Appartements - Table de marqueterie</div>
+        <div class="time-tag">Seules</div>
+        <h1 class="scene-title">Le jaune soufre</h1>
+        <p class="action">Rose ouvre le coffret. Une cascade de soie jaune, vibrante, presque electrique, inonde la piece.</p>
+        <div class="dialogue">
+          <div class="speaker">Marie-Antoinette</div>
+          <p class="line">"Dieu... quelle est cette nuance?"</p>
+        </div>
+        <div class="scene-id">PLAN 05</div>
+      </section>
+
+      <section id="scene6" class="scene clip" data-start="23.7" data-duration="4.9" data-track-index="9">
+        <div class="location">INT. Appartements - Grand Miroir</div>
+        <div class="time-tag">Quelques instants plus tard</div>
+        <h1 class="scene-title">L'armure</h1>
+        <p class="action">Agenouillee, Rose epingle la robe avec une precision chirurgicale. La Reine observe son reflet.</p>
+        <div class="dialogue">
+          <div class="speaker">Rose</div>
+          <p class="line">"La perfection est notre seule armure."</p>
+        </div>
+        <div class="scene-id">PLAN 06</div>
+      </section>
+
+      <section id="scene7" class="scene clip" data-start="28.2" data-duration="4.9" data-track-index="10">
+        <div class="location">INT. Appartements - Coiffeuse</div>
+        <div class="time-tag">Murmures</div>
+        <h1 class="scene-title">Le masque noir</h1>
+        <p class="action">La Reine cache son visage sous le velours noir. Le peuple gronde, dit-elle. Leur armure lui semble soudain trop fine.</p>
+        <div class="dialogue">
+          <div class="speaker">Marie-Antoinette</div>
+          <p class="line">"Nous ne sommes plus des femmes, nous sommes des symboles que l'on veut abattre."</p>
+        </div>
+        <div class="scene-id">PLAN 07</div>
+      </section>
+
+      <section id="scene8" class="scene clip" data-start="32.7" data-duration="5" data-track-index="11">
+        <div class="location">INT. Appartements - Face a face</div>
+        <div class="time-tag">Silence suspendu</div>
+        <h1 class="scene-title">Deux prisons</h1>
+        <p class="action">"Parfois j'aimerais etre libre", souffle la Reine. Rose croise son regard dans la psyche et laisse tomber le masque social.</p>
+        <div class="dialogue">
+          <div class="speaker">Rose</div>
+          <p class="line">"Et moi, parfois, j'aimerais etre moins libre."</p>
+        </div>
+        <div class="scene-id">PLAN 08</div>
+      </section>
+
+      <section id="scene9" class="scene clip" data-start="37.3" data-duration="5.2" data-track-index="12">
+        <div class="location">INT. Appartements - Confession</div>
+        <div class="time-tag">La verite nue</div>
+        <h1 class="scene-title">Fils d'or, coeur de laiton</h1>
+        <p class="action">Rose explique sa fracture: parvenue pour les courtisans, traitresse pour les siens. Son de a coudre de laiton pese dans sa paume.</p>
+        <div class="dialogue">
+          <div class="speaker">Rose</div>
+          <p class="line">"Je manie des fils d'or, mais on me rappelle sans cesse que je ne suis que du laiton."</p>
+        </div>
+        <div class="scene-id">PLAN 09</div>
+      </section>
+
+      <section id="scene10" class="scene clip" data-start="42.1" data-duration="4.6" data-track-index="13">
+        <div class="location">INT. Appartements - Porte principale</div>
+        <div class="time-tag">Coup d'arret</div>
+        <h1 class="scene-title">L'appel du bal</h1>
+        <p class="action">Un huissier frappe. La Reine reprend son masque de souveraine et quitte la piece comme un eclair.</p>
+        <div class="dialogue">
+          <div class="speaker">Huissier (O.S.)</div>
+          <p class="line">"Le Roi attend Votre Majeste pour le bal."</p>
+        </div>
+        <div class="scene-id">PLAN 10</div>
+      </section>
+
+      <section id="scene11" class="scene clip" data-start="46.3" data-duration="4.6" data-track-index="14">
+        <div class="location">EXT. Galerie des glaces</div>
+        <div class="time-tag">Plus tard</div>
+        <h1 class="scene-title">Le soleil et l'ombre</h1>
+        <p class="action">La Reine parade, eblouissante. Derriere les fenetres, Rose observe son oeuvre et les regards meprisants qui l'ecartent.</p>
+        <div class="dialogue">
+          <div class="speaker">Action</div>
+          <p class="line">Dans sa poche, son petit de a coudre en etain. Un empire tient a ce detail.</p>
+        </div>
+        <div class="scene-id">PLAN 11</div>
+      </section>
+
+      <section id="final" class="final-card clip" data-start="50.4" data-duration="2.4" data-track-index="15">
+        <p>
+          <span class="gold">Versailles</span><br />
+          Episode I : Le fil et la couronne
+        </p>
+      </section>
+
+      <section id="cliff" class="cliffhanger clip" data-start="52.4" data-duration="2.2" data-track-index="16">
+        <p>
+          A suivre
+          <span>Le masque tient encore. Pour combien de temps ?</span>
+        </p>
+      </section>
+
+      <div id="flash1" class="flash-cut clip" data-start="7.9" data-duration="0.2" data-track-index="17"></div>
+      <div id="flash2" class="flash-cut clip" data-start="11.8" data-duration="0.2" data-track-index="18"></div>
+      <div id="flash3" class="flash-cut clip" data-start="15.6" data-duration="0.2" data-track-index="19"></div>
+      <div id="flash4" class="flash-cut clip" data-start="19.2" data-duration="0.2" data-track-index="20"></div>
+      <div id="flash5" class="flash-cut clip" data-start="23.6" data-duration="0.2" data-track-index="21"></div>
+      <div id="flash6" class="flash-cut clip" data-start="28.1" data-duration="0.2" data-track-index="22"></div>
+      <div id="flash7" class="flash-cut clip" data-start="32.6" data-duration="0.2" data-track-index="23"></div>
+      <div id="flash8" class="flash-cut clip" data-start="37.2" data-duration="0.2" data-track-index="24"></div>
+      <div id="flash9" class="flash-cut clip" data-start="42" data-duration="0.2" data-track-index="25"></div>
+      <div id="flash10" class="flash-cut clip" data-start="46.2" data-duration="0.2" data-track-index="26"></div>
+
+      <audio
+        id="silence"
+        data-start="0"
+        data-duration="55"
+        data-track-index="27"
+        data-volume="0"
+        src="https://cdn.jsdelivr.net/gh/anars/blank-audio/1-second-of-silence.mp3"
+      ></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      const scenes = [
+        "#scene1",
+        "#scene2",
+        "#scene3",
+        "#scene4",
+        "#scene5",
+        "#scene6",
+        "#scene7",
+        "#scene8",
+        "#scene9",
+        "#scene10",
+        "#scene11",
+      ];
+      const starts = [3.9, 8, 11.9, 15.7, 19.3, 23.7, 28.2, 32.7, 37.3, 42.1, 46.3];
+      const outs = [7.6, 11.6, 15.4, 19, 23.4, 27.9, 32.4, 36.9, 41.8, 46, 50.2];
+      tl.set(scenes, { visibility: "hidden", opacity: 0 }, 0);
+
+      tl.from("#episodeCard", { opacity: 0, scale: 1.05, duration: 1, ease: "power2.out" }, 0.1);
+      tl.from(
+        "#episodeCard .episode-tag, #episodeCard .episode-main, #episodeCard .episode-sub",
+        { opacity: 0, y: 20, duration: 0.75, ease: "power2.out", stagger: 0.12 },
+        0.4
+      );
+      tl.to("#episodeCard", { opacity: 0, duration: 0.6, ease: "power2.in" }, 3.2);
+
+      scenes.forEach((scene, index) => {
+        tl.set(scene, { visibility: "visible" }, starts[index]);
+        tl.from(scene, { opacity: 0, scale: 1.03, duration: 0.65, ease: "power2.out" }, starts[index] + 0.05);
+        tl.from(
+          `${scene} .location, ${scene} .time-tag, ${scene} .scene-title, ${scene} .action, ${scene} .dialogue, ${scene} .scene-id`,
+          { opacity: 0, y: 24, duration: 0.75, ease: "power2.out", stagger: 0.07 },
+          starts[index] + 0.2
+        );
+        tl.to(scene, { opacity: 0, y: -16, duration: 0.55, ease: "power2.in" }, outs[index]);
+        tl.set(scene, { visibility: "hidden" }, outs[index] + 0.56);
+      });
+
+      [
+        "#flash1",
+        "#flash2",
+        "#flash3",
+        "#flash4",
+        "#flash5",
+        "#flash6",
+        "#flash7",
+        "#flash8",
+        "#flash9",
+        "#flash10",
+      ].forEach((flash) => {
+        tl.fromTo(flash, { opacity: 0 }, { opacity: 0.88, duration: 0.08, yoyo: true, repeat: 1, ease: "sine.inOut" });
+      });
+
+      tl.from("#final", { opacity: 0, scale: 0.95, duration: 0.65, ease: "power2.out" }, 50.6);
+      tl.to("#final", { opacity: 0, duration: 0.35, ease: "power2.in" }, 52.3);
+      tl.from("#cliff", { opacity: 0, scale: 1.08, duration: 0.5, ease: "power3.out" }, 52.5);
+      tl.to("#cliff", { opacity: 0, duration: 0.35, ease: "power2.in" }, 54.4);
+
+      tl.to("#base", { filter: "hue-rotate(24deg)", duration: 55, ease: "none" }, 0);
+      tl.to("#grain", { opacity: 0.47, duration: 55, ease: "none" }, 0);
+
+      window.__timelines.main = tl;
+    </script>
+  </body>
+</html>
